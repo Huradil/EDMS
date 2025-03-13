@@ -18,7 +18,7 @@ from django.core.asgi import get_asgi_application
 # This allows easy placement of apps within the interior
 # edms directory.
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
-sys.path.append(str(BASE_DIR / "edms"))
+sys.path.append(str(BASE_DIR / "project"))
 
 # If DJANGO_SETTINGS_MODULE is unset, default to the local settings
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings.local")

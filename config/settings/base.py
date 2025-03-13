@@ -8,7 +8,7 @@ import environ
 
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent.parent
 # edms/
-APPS_DIR = BASE_DIR / "edms"
+APPS_DIR = BASE_DIR / "project"
 env = environ.Env()
 
 READ_DOT_ENV_FILE = env.bool("DJANGO_READ_DOT_ENV_FILE", default=False)
@@ -86,7 +86,8 @@ THIRD_PARTY_APPS = [
 ]
 
 LOCAL_APPS = [
-    "edms.users",
+    "project.users",
+    "project.core"
     # Your stuff: custom apps go here
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
@@ -95,7 +96,7 @@ INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 # MIGRATIONS
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#migration-modules
-MIGRATION_MODULES = {"sites": "edms.contrib.sites.migrations"}
+MIGRATION_MODULES = {"sites": "project.contrib.sites.migrations"}
 
 # AUTHENTICATION
 # ------------------------------------------------------------------------------
@@ -161,6 +162,7 @@ STATICFILES_FINDERS = [
     "django.contrib.staticfiles.finders.FileSystemFinder",
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
 ]
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # MEDIA
 # ------------------------------------------------------------------------------
@@ -191,7 +193,7 @@ TEMPLATES = [
                 "django.template.context_processors.static",
                 "django.template.context_processors.tz",
                 "django.contrib.messages.context_processors.messages",
-                "edms.users.context_processors.allauth_settings",
+                "project.users.context_processors.allauth_settings",
             ],
         },
     },
@@ -316,13 +318,13 @@ ACCOUNT_EMAIL_REQUIRED = True
 # https://docs.allauth.org/en/latest/account/configuration.html
 ACCOUNT_EMAIL_VERIFICATION = "mandatory"
 # https://docs.allauth.org/en/latest/account/configuration.html
-ACCOUNT_ADAPTER = "edms.users.adapters.AccountAdapter"
+ACCOUNT_ADAPTER = "project.users.adapters.AccountAdapter"
 # https://docs.allauth.org/en/latest/account/forms.html
-ACCOUNT_FORMS = {"signup": "edms.users.forms.UserSignupForm"}
+ACCOUNT_FORMS = {"signup": "project.users.forms.UserSignupForm"}
 # https://docs.allauth.org/en/latest/socialaccount/configuration.html
-SOCIALACCOUNT_ADAPTER = "edms.users.adapters.SocialAccountAdapter"
+SOCIALACCOUNT_ADAPTER = "project.users.adapters.SocialAccountAdapter"
 # https://docs.allauth.org/en/latest/socialaccount/configuration.html
-SOCIALACCOUNT_FORMS = {"signup": "edms.users.forms.UserSocialSignupForm"}
+SOCIALACCOUNT_FORMS = {"signup": "project.users.forms.UserSocialSignupForm"}
 
 # django-rest-framework
 # -------------------------------------------------------------------------------

@@ -27,4 +27,6 @@ drf-spectacular==0.28.0  # https://github.com/tfranzel/drf-spectacular
 
 
 cryptography==44.0.2
+setuptools
+cython
 

@@ -323,7 +323,7 @@ tags
 dump.rdb
 
 ### Project template
-edms/media/
+project/media/
 
 .pytest_cache/
 .ipython/
