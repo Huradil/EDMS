@@ -8,7 +8,7 @@
   <link rel="apple-touch-icon" sizes="76x76" href="{% static 'material/img/apple-icon.png' %}">
   <link rel="icon" type="image/png" href="{% static 'material/img/favicon.png' %}">
   <title>
-    Material Dashboard 3 by Creative Tim
+    Electronic document management system
   </title>
   <!--     Fonts and icons     -->
   <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700,900" />
@@ -21,14 +21,18 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
   <!-- CSS Files -->
   <link id="pagestyle" href="{% static 'material/css/material-dashboard.css?v=3.2.0' %}" rel="stylesheet" />
+  <!-- awesome -->
+  <link href="{% static 'plugins/fontawesome/css/all.min.css' %}" rel="stylesheet" />
+
 </head>
 
-<body class="g-sidenav-show  bg-gray-100">
+<body class="g-sidenav-show bg-gray-100 g-sidenav-pinned">
+<!--<body class="g-sidenav-show bg-gray-100 g-sidenav-hidden">-->
 {% include 'includes/sidebar.html'%}
 
 
 
-  <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
+  <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg">
     <!-- Navbar -->
           {% include 'includes/navbar.html' %}
     <!-- End Navbar -->
@@ -42,23 +46,23 @@
                   document.write(new Date().getFullYear())
                 </script>,
                 made with <i class="fa fa-heart"></i> love
-                <a href="https://www.creative-tim.com" class="font-weight-bold" target="_blank">Nuradil Tolokov</a>
+                <a href="https://github.com/Huradil" class="font-weight-bold" target="_blank">Nuradil Tolokov</a>
                 for a better web.
               </div>
             </div>
             <div class="col-lg-6">
               <ul class="nav nav-footer justify-content-center justify-content-lg-end">
                 <li class="nav-item">
-                  <a href="" class="nav-link text-muted" target="_blank">EDMS Tim</a>
+                  <a href="#" class="nav-link text-muted" target="_blank">EDMS Tim</a>
                 </li>
                 <li class="nav-item">
-                  <a href="" class="nav-link text-muted" target="_blank">About Us</a>
+                  <a href="#" class="nav-link text-muted" target="_blank">About Us</a>
                 </li>
                 <li class="nav-item">
-                  <a href="" class="nav-link text-muted" target="_blank">Blog</a>
+                  <a href="#" class="nav-link text-muted" target="_blank">Blog</a>
                 </li>
                 <li class="nav-item">
-                  <a href="" class="nav-link pe-0 text-muted" target="_blank">License</a>
+                  <a href="#" class="nav-link pe-0 text-muted" target="_blank">License</a>
                 </li>
               </ul>
             </div>
@@ -161,6 +165,18 @@
       Scrollbar.init(document.querySelector('#sidenav-scrollbar'), options);
     }
   </script>
+<script>
+  document.getElementById("sidebarToggle").addEventListener("click", function(event) {
+    event.preventDefault();  // Отменить стандартное действие (переход по ссылке)
+
+    // Получаем элемент body
+    var body = document.body;
+
+    // Переключаем классы
+    body.classList.toggle("g-sidenav-hidden");
+    body.classList.toggle("g-sidenav-pinned");
+});
+</script>
   <!-- Github buttons -->
   <script async defer src="https://buttons.github.io/buttons.js"></script>
   <!-- Control Center for Material Dashboard: parallax effects, scripts for the example pages etc -->
