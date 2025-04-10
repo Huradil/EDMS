@@ -25,9 +25,12 @@ from project.core.models import AvailableUrls, SidebarGroup, SidebarItem, Sideba
 #     'Управление': 'far fa-compass',
 #     'Интеграции': 'fas fa-network-wired',
 # }
-group_icon_dict = {}
+group_icon_dict = {
+    "Пользователи": "fas fa-users-cog",
+    "Кадровый модуль": "far fa-id-card",
+}
 
-for app in set(settings.PROJECT_APPS) - set(settings.EXCLUDED_APPS):
+for app in set(settings.LOCAL_APPS):
     views = importlib.import_module(app + '.views')
     names = [x for x in views.__dict__ if not x.startswith('_')]
     globals().update({k: getattr(views, k) for k in names})
@@ -169,11 +172,11 @@ class Command(BaseCommand):
                         icon=group_icon_dict[_class.sidebar_group] if group_icon_dict[_class.sidebar_group] else
                         'far fa-circle')
                     item, _ = SidebarItem.objects.get_or_create(
-                        group=group, display_name=_class.sidebar_name,
+                        group=group, name=_class.sidebar_name,
                         icon=_class.sidebar_icon if hasattr(_class, 'sidebar_icon') else 'far fa-circle')
                     SidebarItemChild.objects.get_or_create(
-                        parent_item=item, display_name=_class.sidebar_item_child,
-                        url=url,
+                        parent_item=item, name=_class.sidebar_item_child,
+                        available_url=url,
                         icon=_class.sidebar_icon_child if hasattr(
                             _class, 'sidebar_icon_child') else 'far fa-circle')
                 elif hasattr(_class, 'sidebar_group') and hasattr(_class, 'sidebar_name'):
@@ -182,5 +185,5 @@ class Command(BaseCommand):
                         icon=group_icon_dict[_class.sidebar_group] if group_icon_dict[_class.sidebar_group] else
                         'far fa-circle')
                     item, _ = SidebarItem.objects.get_or_create(
-                        group=group, display_name=_class.sidebar_name,
-                        url=url, icon=_class.sidebar_icon if hasattr(_class, 'sidebar_icon') else 'far fa-circle')
+                        group=group, name=_class.sidebar_name,
+                        available_url=url, icon=_class.sidebar_icon if hasattr(_class, 'sidebar_icon') else 'far fa-circle')

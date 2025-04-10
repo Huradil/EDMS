@@ -60,7 +60,8 @@ class SidebarItemChild(models.Model):
     name = models.CharField(verbose_name='Название', max_length=255)
     icon = models.CharField(verbose_name='Иконка', max_length=255)
     available_url = models.ForeignKey(AvailableUrls, verbose_name='url', on_delete=models.CASCADE)
-    parent_item = models.ForeignKey(SidebarItem, verbose_name='Элемент бокового меню', on_delete=models.CASCADE)
+    parent_item = models.ForeignKey(SidebarItem, verbose_name='Элемент бокового меню', on_delete=models.CASCADE,
+                                    related_name='children')
 
     def __str__(self):
         return self.name
