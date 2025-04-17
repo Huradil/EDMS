@@ -50,3 +50,11 @@ class UserCreateForm(forms.ModelForm):
         model = User
         fields = ['first_name', 'last_name', 'patronymic', 'username', 'email', 'password1', 'password2']
 
+    def clean(self):
+        super(UserCreateForm, self).clean()
+        password1 = self.cleaned_data.get('password1')
+        password2 = self.cleaned_data.get('password2')
+        if password1 and password2 and password1 != password2:
+            self._errors['password1'] = self.error_class(['Пароли не совпадают!'])
+        return self.cleaned_data
+

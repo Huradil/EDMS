@@ -16,32 +16,63 @@
   <link href="{% static 'material/css/nucleo-icons.css' %}" rel="stylesheet" />
   <link href="{% static 'material/css/nucleo-svg.css' %}" rel="stylesheet" />
   <!-- Font Awesome Icons -->
-  <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
+<!--  <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>-->
   <!-- Material Icons -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
   <!-- CSS Files -->
   <link id="pagestyle" href="{% static 'material/css/material-dashboard.css?v=3.2.0' %}" rel="stylesheet" />
   <!-- awesome -->
   <link href="{% static 'plugins/fontawesome/css/all.min.css' %}" rel="stylesheet" />
+  {% block extra_css %}{% endblock %}
 
 </head>
+
+<div class="position-fixed top-0 end-0 p-4" style="z-index: 1055">
+  {% for message in messages %}
+    {% with toast_color=message.tags %}
+      {% if message.tags == 'error' %}
+        {% with toast_color="danger" %}
+          <div class="toast text-white bg-{{ toast_color }} border-0 mb-2" role="alert" aria-live="assertive" aria-atomic="true" style="width: 350px; font-size: 1.2rem;">
+            <div class="d-flex">
+              <div class="toast-body">
+                {{ message }}
+              </div>
+              <span class="toast-close-icon" data-bs-dismiss="toast" aria-label="Закрыть" style="cursor: pointer;">
+                <i class="fa fa-times"></i>
+              </span>
+            </div>
+          </div>
+        {% endwith %}
+      {% else %}
+        <div class="toast text-white bg-{{ toast_color }} border-0 mb-2" role="alert" aria-live="assertive" aria-atomic="true" style="width: 350px; font-size: 1.2rem;">
+          <div class="d-flex">
+            <div class="toast-body">
+              {{ message }}
+            </div>
+            <span class="toast-close-icon" data-bs-dismiss="toast" aria-label="Закрыть" style="cursor: pointer;">
+              <i class="fa fa-times"></i>
+            </span>
+          </div>
+        </div>
+      {% endif %}
+    {% endwith %}
+  {% endfor %}
+</div>
+
 
 <body class="g-sidenav-show bg-gray-100 g-sidenav-pinned">
 <!--<body class="g-sidenav-show bg-gray-100 g-sidenav-hidden">-->
 {% include 'includes/sidebar.html'%}
-
-
-
   <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg">
     <!-- Navbar -->
           {% include 'includes/navbar.html' %}
     <!-- End Navbar -->
-    <div>
-       {% block content %}
+    <div class="container-fluid py-2">
+      <div>
+        {% block content %}
 
         {% endblock content %}
     </div>
-    <div class="container-fluid py-2">
       <footer class="footer py-4  ">
         <div class="container-fluid">
           <div class="row align-items-center justify-content-lg-between">
@@ -161,6 +192,15 @@
   <script src="{% static 'material/js/core/bootstrap.min.js' %}"></script>
   <script src="{% static 'material/js/plugins/perfect-scrollbar.min.js' %}"></script>
   <script src="{% static 'material/js/plugins/smooth-scrollbar.min.js' %}"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const toasts = document.querySelectorAll('.toast');
+    toasts.forEach(function (toastEl) {
+      const toast = new bootstrap.Toast(toastEl, { delay: 5000 });
+      toast.show();
+    });
+  });
+</script>
   <script>
     var win = navigator.platform.indexOf('Win') > -1;
     if (win && document.querySelector('#sidenav-scrollbar')) {
@@ -186,6 +226,7 @@
   <script async defer src="https://buttons.github.io/buttons.js"></script>
   <!-- Control Center for Material Dashboard: parallax effects, scripts for the example pages etc -->
   <script src="{% static 'material/js/material-dashboard.min.js?v=3.2.0' %}"></script>
+{% block extra_js %}{% endblock %}
 </body>
 
 </html>

@@ -66,20 +66,23 @@ class UserCreateView(View):
         form = self.form_class(request.POST)
         if form.is_valid():
             try:
-                user = create_user(
+                create_user(
                     first_name=form.cleaned_data['first_name'],
                     last_name=form.cleaned_data['last_name'],
                     username=form.cleaned_data['username'],
                     email=form.cleaned_data.get('email', None),
-                    patronymic=form.cleaned_data.get('patronymic', None)
+                    patronymic=form.cleaned_data.get('patronymic', None),
+                    password=form.cleaned_data['password1'],
                 )
             except Exception as e:
-                messages.error(request,_(f'Error {e}'))
+                messages.error(request,_(f'Error {e.__str__()}'))
+                return redirect(reverse('users:user_create'))
             else:
                 messages.success(request, _('User was successfully created'))
-                return redirect(reverse('users:detail', kwargs={'username': user.username}))
+                return redirect(reverse('account_login'))
         else:
             messages.error(request, _(f'Error in form {form.errors}'))
+            return redirect(reverse('users:user_create'))
 
 
 

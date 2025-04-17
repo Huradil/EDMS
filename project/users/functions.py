@@ -1,14 +1,16 @@
 from project.users.models import User
+from django.db import transaction
 
 
+@transaction.atomic
 def create_user(
     first_name: str,
     last_name: str,
     password: str,
     username: str,
-    key_password: str | None,
-    patronymic: str | None,
-    email: str | None,
+    key_password: str | None = None,
+    patronymic: str | None = None,
+    email: str | None = None,
 ) -> User:
     user = User(
         first_name=first_name,
