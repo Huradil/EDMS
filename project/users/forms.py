@@ -58,3 +58,16 @@ class UserCreateForm(forms.ModelForm):
             self._errors['password1'] = self.error_class(['Пароли не совпадают!'])
         return self.cleaned_data
 
+
+class UserKeyPasswordForm(forms.Form):
+    password1 = forms.CharField(label='Пароль', widget=forms.PasswordInput)
+    password2 = forms.CharField(label='Подтвердите пароль', widget=forms.PasswordInput)
+
+    def clean(self):
+        super(UserKeyPasswordForm, self).clean()
+        password1 = self.cleaned_data.get('password1')
+        password2 = self.cleaned_data.get('password2')
+        if password1 and password2 and password1 != password2:
+            self._errors['password1'] = self.error_class(['Пароли не совпадают!'])
+        return self.cleaned_data
+

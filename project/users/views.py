@@ -11,8 +11,8 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 
 from project.users.models import User
-from project.users.forms import UserCreateForm
-from project.users.functions import create_user
+from project.users.forms import UserCreateForm, UserKeyPasswordForm
+from project.users.functions import create_user, user_generate_keys
 
 
 class UserDetailView(LoginRequiredMixin, DetailView):
@@ -83,6 +83,41 @@ class UserCreateView(View):
         else:
             messages.error(request, _(f'Error in form {form.errors}'))
             return redirect(reverse('users:user_create'))
+
+
+class UserGetKeys(LoginRequiredMixin, View):
+    template_name = 'users/user_get_keys.html'
+    sidebar_group = 'Пользователи'
+    sidebar_name = 'Получить ключи'
+    sidebar_icon = 'fa-solid fa-key'
+
+    def get(self, request):
+        user = self.request.user
+        assert isinstance(user, User)
+        key_exists = user.private_key and user.public_key
+        return render(request, self.template_name, context={
+                    'key_exists': key_exists,
+                })
+
+    def post(self, request):
+        user = self.request.user
+        assert isinstance(user, User)
+        form = UserKeyPasswordForm(request.POST)
+        if form.is_valid():
+            key_password = form.cleaned_data['password1']
+            try:
+                user_generate_keys(user, key_password)
+            except Exception as e:
+                messages.error(request, _(f'Error {e.__str__()}'))
+                return redirect(reverse('users:generate_keys'))
+            else:
+                messages.success(request, _('Ключи успешно получены'))
+                return redirect(reverse('users:detail', kwargs={'username': user.username}))
+        else:
+            messages.error(request, _(f'Error in form {form.errors}'))
+            return redirect(reverse('users:generate_keys'))
+
+
 
 
 

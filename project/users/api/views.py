@@ -8,13 +8,18 @@ from rest_framework.viewsets import GenericViewSet
 
 from project.users.models import User
 
-from .serializers import UserSerializer
+from .serializers import UserSerializer, UserCreateSerializer
 
 
 class UserViewSet(RetrieveModelMixin, ListModelMixin, UpdateModelMixin, GenericViewSet):
     serializer_class = UserSerializer
     queryset = User.objects.all()
     lookup_field = "username"
+
+    def get_serializer_class(self):
+        if self.action == "create":
+            return UserCreateSerializer
+        return UserSerializer
 
     def get_queryset(self, *args, **kwargs):
         assert isinstance(self.request.user.id, int)

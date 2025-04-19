@@ -1,0 +1,188 @@
+{% extends 'base_page.html' %}
+{% load static %}
+{% block extra_css %}
+<style>
+    .bg-gradient-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .bg-soft-light {
+        background-color: rgba(248, 249, 250, 0.8);
+    }
+
+    .blur-shape {
+        position: absolute;
+        width: 150px;
+        height: 150px;
+        background: rgba(255,255,255,0.1);
+        border-radius: 50%;
+        filter: blur(40px);
+        right: -30px;
+        top: -30px;
+    }
+
+    .form-control {
+        transition: all 0.3s ease;
+        border: 1px solid transparent !important;
+    }
+
+    .form-control:focus {
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+        background-color: white !important;
+    }
+
+    .alert {
+        transition: transform 0.3s ease;
+    }
+
+    .alert:hover {
+        transform: translateY(-2px);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+                <!-- Заголовок с градиентом -->
+                <div class="card-header bg-gradient-primary py-4 position-relative">
+                    <div class="blur-shape"></div>
+                    <h3 class="text-white mb-0 text-center">
+                        <i class="bi bi-shield-check fs-1 me-2"></i><br>
+                        Ключ безопасности документов
+                    </h3>
+                </div>
+
+                <div class="card-body p-4 p-md-5">
+                    <!-- Важное уведомление -->
+                  {% if key_exists %}
+                  <div class="alert alert-danger d-flex align-items-center fade show" role="alert">
+                        <i class="bi bi-exclamation-octagon-fill fs-3 me-3"></i>
+                        <div>
+                            <h5 class="alert-heading mb-2">Ключи уже существуют!</h5>
+                            <p class="mb-0">Используйте существующие ключи или удалите их перед генерацией новых.</p>
+                        </div>
+                    </div>
+                  {% else %}
+
+                    <div class="alert alert-warning border-0 bg-soft-warning shadow-sm d-flex rounded-3" role="alert">
+                        <i class="bi bi-exclamation-diamond fs-3 me-3 text-warning"></i>
+                        <div>
+                            <h5 class="text-red mb-2">Запомните ваш пароль!</h5>
+                            <p class="small mb-0">Этот пароль является цифровой подписью и <u>не подлежит восстановлению</u>.<br>
+                            Рекомендуем сохранить его в надежном менеджере паролей.</p>
+                        </div>
+                    </div>
+                  {% endif %}
+
+                    <!-- Форма -->
+                    <form class="needs-validation" novalidate action="{% url 'users:generate_keys' %}" method="post">
+                        {% csrf_token %}
+                        <!-- Поле пароля -->
+                        <div class="form-floating mb-4">
+                            <input type="password"
+                                   name="password1"
+                                   class="form-control border-0 bg-soft-light rounded-3 py-3"
+                                   id="signPassword"
+                                   placeholder=" "
+                                   required
+                                   pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}">
+                            <label for="signPassword" class="text-muted">
+                                <i class="fa-solid fa-key"></i>Придумайте пароль
+                            </label>
+                            <div class="password-strength mt-2">
+                                <div class="progress" style="height: 4px;">
+                                    <div class="progress-bar bg-danger"
+                                         role="progressbar"
+                                         style="width: 0%; transition: width 0.3s ease"
+                                         aria-valuenow="0">
+                                    </div>
+                                </div>
+                                <div class="form-text small d-flex justify-content-between">
+                                    <span>Сложность пароля:</span>
+                                    <span class="text-danger">Слабый</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Подтверждение пароля -->
+                        <div class="form-floating mb-4">
+                            <input type="password"
+                                   name="password2"
+                                   class="form-control border-0 bg-soft-light rounded-3 py-3"
+                                   id="confirmSignPassword"
+                                   placeholder=" "
+                                   required>
+                            <label for="confirmSignPassword" class="text-muted">
+                                <i class="fa-solid fa-lock"></i>Повторите пароль
+                            </label>
+                        </div>
+
+                        <!-- Кнопка отправки -->
+                      {% if not key_exists %}
+                        <button class="btn btn-primary w-100 rounded-pill py-3 shadow-sm" type="submit">
+                            <i class="fa-solid fa-signature"></i>Создать цифровую подпись
+                        </button>
+                      {% endif %}
+
+                        <!-- Дополнительная информация -->
+                        <div class="text-center mt-4">
+                            <p class="small text-muted">
+                                <i class="fa-solid fa-circle-info"></i>
+                                При утере пароля потребуется полная перерегистрация
+                            </p>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const passwordInput = document.getElementById('signPassword');
+    const strengthBar = document.querySelector('.progress-bar');
+    const strengthText = document.querySelector('.password-strength .text-danger');
+
+    passwordInput.addEventListener('input', function() {
+        const strength = calculateStrength(this.value);
+        strengthBar.style.width = `${strength.percentage}%`;
+        strengthBar.className = `progress-bar bg-${strength.color}`;
+        strengthText.textContent = strength.text;
+        strengthText.className = `text-${strength.color}`;
+    });
+
+    function calculateStrength(password) {
+        let score = 0;
+        if (password.length >= 8) score += 2;
+        if (password.match(/[A-Z]/)) score += 2;
+        if (password.match(/[0-9]/)) score += 2;
+        if (password.match(/[^A-Za-z0-9]/)) score += 2;
+        if (password.length >= 12) score += 2;
+
+        const percentage = Math.min((score / 10) * 100, 100);
+
+        return {
+            percentage,
+            color: percentage < 40 ? 'danger' : percentage < 70 ? 'warning' : 'success',
+            text: percentage < 40 ? 'Слабый' : percentage < 70 ? 'Средний' : 'Надежный'
+        };
+    }
+
+    document.getElementById('confirmSignPassword').addEventListener('input', function() {
+        if (this.value !== passwordInput.value) {
+            this.setCustomValidity('Пароли не совпадают');
+            this.classList.add('is-invalid');
+        } else {
+            this.setCustomValidity('');
+            this.classList.remove('is-invalid');
+        }
+    });
+});
+</script>
+{% endblock %}

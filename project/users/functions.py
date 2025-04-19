@@ -24,3 +24,9 @@ def create_user(
     if key_password:
         user.generate_keys(key_password)
     return user
+
+
+@transaction.atomic
+def user_generate_keys(user: User, key_password: str) -> None:
+    user.generate_keys(key_password)
+    user.save()
