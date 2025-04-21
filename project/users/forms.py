@@ -6,8 +6,13 @@ from django.contrib.auth import forms as admin_forms
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.password_validation import validate_password
 from django import forms
+from django_select2 import forms as s2_forms
 
-from .models import User
+from .models import User, Department
+
+
+class DepartmentWidget(s2_forms.ModelSelect2Widget):
+    search_fields = ['name__icontains', 'parent__name__icontains', 'branch__name__icontains']
 
 
 class UserAdminChangeForm(admin_forms.UserChangeForm):
@@ -70,4 +75,14 @@ class UserKeyPasswordForm(forms.Form):
         if password1 and password2 and password1 != password2:
             self._errors['password1'] = self.error_class(['Пароли не совпадают!'])
         return self.cleaned_data
+
+
+class DepartmentForm(forms.ModelForm):
+    class Meta:
+        model = Department
+        fields = ['name', 'parent', 'branch', 'description']
+        widgets = {
+            'parent': DepartmentWidget,
+        }
+
 

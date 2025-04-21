@@ -25,8 +25,8 @@ django-cors-headers==4.7.0  # https://github.com/adamchainz/django-cors-headers
 # DRF-spectacular for api documentation
 drf-spectacular==0.28.0  # https://github.com/tfranzel/drf-spectacular
 
-
 cryptography==44.0.2
+django-select2==8.4.0
 setuptools
 cython
 

@@ -6,12 +6,12 @@ from django.utils.translation import gettext_lazy as _
 from django.views.generic import DetailView
 from django.views.generic import RedirectView
 from django.views.generic import UpdateView
-from django.views.generic import View
+from django.views.generic import View, CreateView
 from django.shortcuts import render, redirect
 from django.contrib import messages
 
 from project.users.models import User
-from project.users.forms import UserCreateForm, UserKeyPasswordForm
+from project.users.forms import UserCreateForm, UserKeyPasswordForm, DepartmentForm
 from project.users.functions import create_user, user_generate_keys
 
 
@@ -116,6 +116,42 @@ class UserGetKeys(LoginRequiredMixin, View):
         else:
             messages.error(request, _(f'Error in form {form.errors}'))
             return redirect(reverse('users:generate_keys'))
+
+
+class DepartmentCreateView(LoginRequiredMixin, CreateView):
+    template_name = 'hr/department_create.html'
+    form_class = DepartmentForm
+    sidebar_group = 'Кадровый модуль'
+    sidebar_name = 'Создать структурное подразделение'
+    sidebar_icon = 'fa-solid fa-building-user'
+
+    def get(self, request):
+        assert isinstance(request.user, User)
+        form = DepartmentForm()
+        return render(request, self.template_name, context={
+            'form': form,
+        })
+
+    def post(self, request):
+        assert isinstance(request.user, User)
+        form = DepartmentForm(request.POST)
+        if form.is_valid():
+            try:
+                department = form.save(commit=True)
+            except Exception as e:
+                messages.error(request, _(f'Error {e.__str__()}'))
+                return self.render_to_response(self.get_context_data(form=form))
+            else:
+                messages.success(request, _('Структурное подразделение успешно создано'))
+                return redirect(reverse('users:department_create'))
+        else:
+            messages.error(request, _(f'Error in form {form.errors}'))
+            return self.form_invalid(form)
+
+
+
+
+
 
 
 

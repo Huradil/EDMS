@@ -24,6 +24,7 @@ urlpatterns = [
     path("users/", include("project.users.urls", namespace="users")),
     path("", include("project.core.urls", namespace="core"), name="index"),
     path("accounts/", include("allauth.urls")),
+    path('select2/', include('django_select2.urls')),
     # Your stuff: custom urls includes go here
     # ...
     # Media files

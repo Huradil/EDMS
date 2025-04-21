@@ -1,15 +1,8 @@
-import base64, os
-from inspect import signature
-
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
-from cryptography.hazmat.primitives.asymmetric import rsa, padding
-from cryptography.hazmat.primitives import hashes, serialization
-from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
-from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 
 from cython_generate_keys import generate_keys, decrypt_private_key, sign_document, verify_signature
 
@@ -62,3 +55,45 @@ class User(AbstractUser):
 
         """
         return reverse("users:detail", kwargs={"username": self.username})
+
+
+class Department(models.Model):
+    name = models.CharField(max_length=255, verbose_name='Название структурного подразделения',
+                            help_text='Введите название структурного подразделения')
+    parent = models.ForeignKey('self', on_delete=models.CASCADE, verbose_name='Родительский подразделение',
+                               help_text='Выберите родительский подразделение', null=True, blank=True,
+                               related_name='children')
+    branch = models.ForeignKey('core.Branch', on_delete=models.CASCADE, verbose_name='Филиал', related_name='departments',
+                               help_text='Выберите филиал')
+    description = models.TextField(verbose_name='Описание структурного подразделения',
+                                   help_text='Введите описание структурного подразделения', null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.name} ({self.branch.name})"
+
+
+class Position(models.Model):
+    name = models.CharField(max_length=255, verbose_name='Название должности',
+                            help_text='Введите название должности')
+    department = models.ForeignKey(Department, on_delete=models.CASCADE, verbose_name='Структурное подразделение',
+                                   help_text='Выберите структурное подразделение', related_name='positions')
+    description = models.TextField(verbose_name='Описание должности',
+                                   help_text='Введите описание должности', null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.name} ({self.department.name})"
+
+
+class UserEmployee(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Пользователь')
+    position = models.ForeignKey(Position, on_delete=models.CASCADE, verbose_name='Должность', related_name='employees')
+    start_date = models.DateField(verbose_name='Дата начала работы')
+    end_date = models.DateField(verbose_name='Дата окончания работы', null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.user.fullname} ({self.position.name})"
+
+    def save(self, *args, **kwargs):
+        if self.__class__.objects.filter(user=self.user, end_date__isnull=True).exists():
+            self.__class__.objects.filter(user=self.user, end_date__isnull=True).update(end_date=self.start_date)
+        super().save(*args, **kwargs)

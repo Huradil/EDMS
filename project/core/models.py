@@ -4,6 +4,18 @@ from django.core.cache.utils import make_template_fragment_key
 from project.users.models import User
 
 
+class Branch(models.Model):
+    id = models.SmallIntegerField(primary_key=True)
+    name = models.CharField(verbose_name='Название филиала', max_length=255)
+    address = models.CharField(verbose_name='Адрес филиала', max_length=255)
+    open_date = models.DateField(verbose_name='Дата открытия')
+    close_date = models.DateField(verbose_name='Дата закрытия', null=True, blank=True)
+    is_active = models.BooleanField(verbose_name='Филиал активен', default=True)
+
+    def __str__(self):
+        return self.name
+
+
 class SidebarGroup(models.Model):
     name = models.CharField(verbose_name='Группа бокового меню', max_length=255)
     icon = models.CharField(verbose_name='Иконка бокового меню', max_length=255)

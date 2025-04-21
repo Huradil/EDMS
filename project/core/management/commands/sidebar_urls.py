@@ -26,8 +26,8 @@ from project.core.models import AvailableUrls, SidebarGroup, SidebarItem, Sideba
 #     'Интеграции': 'fas fa-network-wired',
 # }
 group_icon_dict = {
-    "Пользователи": "fas fa-users-cog",
-    "Кадровый модуль": "far fa-id-card",
+    'Пользователи': 'fas fa-users-cog',
+    'Кадровый модуль': 'fa-solid fa-users-between-lines',
 }
 
 for app in set(settings.LOCAL_APPS):
