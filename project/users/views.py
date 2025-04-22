@@ -119,11 +119,12 @@ class UserGetKeys(LoginRequiredMixin, View):
 
 
 class DepartmentCreateView(LoginRequiredMixin, CreateView):
-    template_name = 'hr/department_create.html'
+    template_name = 'standard_form.html'
     form_class = DepartmentForm
     sidebar_group = 'Кадровый модуль'
     sidebar_name = 'Создать структурное подразделение'
     sidebar_icon = 'fa-solid fa-building-user'
+    object = None
 
     def get(self, request):
         assert isinstance(request.user, User)

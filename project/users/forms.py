@@ -8,6 +8,7 @@ from django.contrib.auth.password_validation import validate_password
 from django import forms
 from django_select2 import forms as s2_forms
 
+from project.contrib.mixins import FormControlMixin
 from .models import User, Department
 
 
@@ -77,7 +78,7 @@ class UserKeyPasswordForm(forms.Form):
         return self.cleaned_data
 
 
-class DepartmentForm(forms.ModelForm):
+class DepartmentForm(FormControlMixin, forms.ModelForm):
     class Meta:
         model = Department
         fields = ['name', 'parent', 'branch', 'description']
