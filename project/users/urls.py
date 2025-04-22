@@ -4,12 +4,13 @@ from .views import user_detail_view
 from .views import user_redirect_view
 from .views import user_update_view
 from .views import UserCreateView
-from .views import UserGetKeys, DepartmentCreateView
+from .views import UserGetKeys, DepartmentCreateView, DepartmentListView
 
 app_name = "users"
 urlpatterns = [
     # hr
     path('department_create/', view=DepartmentCreateView.as_view(), name='department_create'),
+    path('department_list/', view=DepartmentListView.as_view(), name='department_list'),
 
     # users
     path('user_create/', view=UserCreateView.as_view(), name='user_create'),

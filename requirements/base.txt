@@ -27,6 +27,7 @@ drf-spectacular==0.28.0  # https://github.com/tfranzel/drf-spectacular
 
 cryptography==44.0.2
 django-select2==8.4.0
+django-tables2==2.7.5
 setuptools
 cython
 

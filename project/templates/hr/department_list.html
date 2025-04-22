@@ -1,0 +1,50 @@
+{% extends 'base_page.html' %}
+{% load static %}
+{% load render_table from django_tables2 %}
+
+{% block extra_css %}
+<style>
+    /* Минимальные кастомные стили */
+    .table thead th {
+        background: #f8f9fa;
+        border-bottom: 2px solid #dee2e6;
+        font-weight: 600;
+        color: #2c3e50;
+        letter-spacing: 0.03em;
+    }
+
+    .table-hover tbody tr:hover {
+        background-color: #f8f9fa !important;
+    }
+
+    .table td {
+        border-color: #f1f3f5;
+    }
+
+    .border {
+        border-color: #e9ecef !important;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="container my-5">
+    <!-- Заголовок с иконкой -->
+    <div class="d-flex align-items-center gap-3 mb-4">
+        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-table text-primary" viewBox="0 0 16 16">
+            <path d="M0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2zm15 2h-4v3h4V4zm0 4h-4v3h4V8zm0 4h-4v3h3a1 1 0 0 0 1-1v-2zm-5 3v-3H6v3h4zm-5 0v-3H1v2a1 1 0 0 0 1 1h3zm-4-4h4V8H1v3zm0-4h4V4H1v3zm5-3v3h4V4H6zm4 4H6v3h4V8z"/>
+        </svg>
+        <h2 class="m-0 display-6 fw-bold text-primary">
+            {{ table_title }}
+            <small class="text-muted fs-6 d-block mt-1">Обновлено: {% now "d.m.Y H:i" %}</small>
+        </h2>
+    </div>
+
+    <!-- Таблица -->
+    <div class="border rounded-3 overflow-hidden shadow-sm">
+        {% render_table table %}
+    </div>
+</div>
+
+{% endblock %}

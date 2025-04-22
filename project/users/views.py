@@ -1,3 +1,4 @@
+from django_tables2 import RequestConfig
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.db.models import QuerySet
@@ -10,9 +11,10 @@ from django.views.generic import View, CreateView
 from django.shortcuts import render, redirect
 from django.contrib import messages
 
-from project.users.models import User
+from project.users.models import User, Department
 from project.users.forms import UserCreateForm, UserKeyPasswordForm, DepartmentForm
 from project.users.functions import create_user, user_generate_keys
+from project.users.tables import DepartmentTable
 
 
 class UserDetailView(LoginRequiredMixin, DetailView):
@@ -148,6 +150,24 @@ class DepartmentCreateView(LoginRequiredMixin, CreateView):
         else:
             messages.error(request, _(f'Error in form {form.errors}'))
             return self.form_invalid(form)
+
+
+class DepartmentListView(LoginRequiredMixin, View):
+    template_name = 'hr/department_list.html'
+    sidebar_group = 'Кадровый модуль'
+    sidebar_name = 'Список структурных подразделений'
+    sidebar_icon = 'fa-solid fa-table-list'
+
+    def get(self, request):
+        assert isinstance(request.user, User)
+        departments = Department.objects.all()
+        table = DepartmentTable(departments)
+        RequestConfig(request, paginate={'per_page': 10}).configure(table)
+        return render(request, self.template_name, context={
+            'table': table,
+            'table_title': 'Список структурных подразделений',
+        })
+
 
 
 
