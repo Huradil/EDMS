@@ -23,7 +23,7 @@ class User(AbstractUser):
     public_key = models.TextField(blank=True, null=True)
 
     def __str__(self):
-        return f"{self.first_name} {self.last_name}"
+        return self.username
 
     def generate_keys(self, password: str):
         self.private_key, self.public_key = generate_keys(password)
@@ -95,5 +95,9 @@ class UserEmployee(models.Model):
 
     def save(self, *args, **kwargs):
         if self.__class__.objects.filter(user=self.user, end_date__isnull=True).exists():
+            last_position = (self.__class__.objects.filter(user=self.user, end_date__isnull=True).
+                             order_by('-start_date').first())
+            if last_position.start_date > self.start_date:
+                raise Exception("Невозможно назначить должность, которая начинается раньше, чем уже имеющаяся должность")
             self.__class__.objects.filter(user=self.user, end_date__isnull=True).update(end_date=self.start_date)
         super().save(*args, **kwargs)

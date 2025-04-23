@@ -1,6 +1,6 @@
 {% load static i18n %}<!DOCTYPE html>
 {% get_current_language as LANGUAGE_CODE %}
-<html lang="{{ LANGUAGE_CODE }}">
+<html lang="{{ LANGUAGE_CODE }}" style="height: 100%">
 
 <head>
   <meta charset="utf-8" />
@@ -62,20 +62,19 @@
 </div>
 
 
-<body class="g-sidenav-show bg-gray-100 g-sidenav-pinned">
+<body class="g-sidenav-show bg-gray-100 g-sidenav-pinned" style="height: 100%">
 <!--<body class="g-sidenav-show bg-gray-100 g-sidenav-hidden">-->
 {% include 'includes/sidebar.html'%}
-  <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg">
+  <main class="main-content d-flex flex-column position-relative min-vh-100 border-radius-lg">
     <!-- Navbar -->
           {% include 'includes/navbar.html' %}
     <!-- End Navbar -->
-    <div class="container-fluid py-2">
-      <div>
+      <div class="flex-grow-1">
         {% block content %}
 
         {% endblock content %}
     </div>
-      <footer class="footer py-4  ">
+      <footer class="footer py-4 mt-auto">
         <div class="container-fluid">
           <div class="row align-items-center justify-content-lg-between">
             <div class="col-lg-6 mb-lg-0 mb-4">
@@ -107,8 +106,7 @@
           </div>
         </div>
       </footer>
-    </div>
-  </main>
+    </main>
 
 
 

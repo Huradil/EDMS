@@ -28,6 +28,7 @@ from project.core.models import AvailableUrls, SidebarGroup, SidebarItem, Sideba
 group_icon_dict = {
     'Пользователи': 'fas fa-users-cog',
     'Кадровый модуль': 'fa-solid fa-users-between-lines',
+    'Документы': 'fa-solid fa-folder-tree'
 }
 
 for app in set(settings.LOCAL_APPS):

@@ -11,10 +11,10 @@ from django.views.generic import View, CreateView
 from django.shortcuts import render, redirect
 from django.contrib import messages
 
-from project.users.models import User, Department
-from project.users.forms import UserCreateForm, UserKeyPasswordForm, DepartmentForm
+from project.users.models import User, Department, Position
+from project.users.forms import UserCreateForm, UserKeyPasswordForm, DepartmentForm, PositionForm, UserEmployeeForm
 from project.users.functions import create_user, user_generate_keys
-from project.users.tables import DepartmentTable
+from project.users.tables import DepartmentTable, PositionTable
 
 
 class UserDetailView(LoginRequiredMixin, DetailView):
@@ -146,14 +146,14 @@ class DepartmentCreateView(LoginRequiredMixin, CreateView):
                 return self.render_to_response(self.get_context_data(form=form))
             else:
                 messages.success(request, _('Структурное подразделение успешно создано'))
-                return redirect(reverse('users:department_create'))
+                return redirect(reverse('users:department_list'))
         else:
             messages.error(request, _(f'Error in form {form.errors}'))
             return self.form_invalid(form)
 
 
 class DepartmentListView(LoginRequiredMixin, View):
-    template_name = 'hr/department_list.html'
+    template_name = 'standard_list.html'
     sidebar_group = 'Кадровый модуль'
     sidebar_name = 'Список структурных подразделений'
     sidebar_icon = 'fa-solid fa-table-list'
@@ -167,6 +167,87 @@ class DepartmentListView(LoginRequiredMixin, View):
             'table': table,
             'table_title': 'Список структурных подразделений',
         })
+
+
+class PositionCreateView(LoginRequiredMixin, CreateView):
+    template_name = 'standard_form.html'
+    form_class = PositionForm
+    sidebar_group = 'Кадровый модуль'
+    sidebar_name = 'Создать должность'
+    sidebar_icon = 'fa-solid fa-clipboard-user'
+    object = None
+
+    def get(self, request):
+        assert isinstance(request.user, User)
+        form = PositionForm()
+        return render(request, self.template_name, context={
+            'form': form,
+        })
+
+    def post(self, request):
+        assert isinstance(request.user, User)
+        form = PositionForm(request.POST)
+        if form.is_valid():
+            try:
+                position = form.save(commit=True)
+            except Exception as e:
+                messages.error(request, _(f'Error {e.__str__()}'))
+                return self.render_to_response(self.get_context_data(form=form))
+            else:
+                messages.success(request, _('Должность успешно создана'))
+                return redirect(reverse('users:position_list'))
+        else:
+            messages.error(request, _(f'Error in form {form.errors}'))
+            return self.form_invalid(form)
+
+
+class PositionListView(LoginRequiredMixin, View):
+    template_name = 'standard_list.html'
+    sidebar_group = 'Кадровый модуль'
+    sidebar_name = 'Список должностей'
+    sidebar_icon = 'fa-solid fa-clipboard-list'
+
+    def get(self, request):
+        assert isinstance(request.user, User)
+        positions = Position.objects.all()
+        table = PositionTable(positions)
+        RequestConfig(request, paginate={'per_page': 10}).configure(table)
+        return render(request, self.template_name, context={
+            'table': table,
+            'table_title': 'Список должностей',
+        })
+
+
+class EmployeeCreateView(LoginRequiredMixin, CreateView):
+    template_name = 'standard_form.html'
+    form_class = UserEmployeeForm
+    sidebar_group = 'Кадровый модуль'
+    sidebar_name = 'Назначение'
+    sidebar_icon = 'fa-solid fa-address-card'
+    object = None
+
+    def get(self, request):
+        assert isinstance(request.user, User)
+        form = UserEmployeeForm()
+        return render(request, self.template_name, context={
+            'form': form,
+        })
+
+    def post(self, request):
+        assert isinstance(request.user, User)
+        form = UserEmployeeForm(request.POST)
+        if form.is_valid():
+            try:
+                user = form.save(commit=True)
+            except Exception as e:
+                messages.error(request, _(f'Error {e.__str__()}'))
+                return self.render_to_response(self.get_context_data(form=form))
+            else:
+                messages.success(request, _('Пользователь успешно назначен'))
+                return redirect(reverse('users:employee_create'))
+        else:
+            messages.error(request, _(f'Error in form {form.errors}'))
+            return self.form_invalid(form)
 
 
 

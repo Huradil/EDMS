@@ -9,11 +9,19 @@ from django import forms
 from django_select2 import forms as s2_forms
 
 from project.contrib.mixins import FormControlMixin
-from .models import User, Department
+from .models import User, Department, Position, UserEmployee
 
 
 class DepartmentWidget(s2_forms.ModelSelect2Widget):
     search_fields = ['name__icontains', 'parent__name__icontains', 'branch__name__icontains']
+
+
+class PositionWidget(s2_forms.ModelSelect2Widget):
+    search_fields = ['name__icontains', 'department__name__icontains']
+
+
+class UserWidget(s2_forms.ModelSelect2Widget):
+    search_fields = ['username__icontains', 'first_name__icontains', 'last_name__icontains', 'patronymic__icontains']
 
 
 class UserAdminChangeForm(admin_forms.UserChangeForm):
@@ -84,6 +92,26 @@ class DepartmentForm(FormControlMixin, forms.ModelForm):
         fields = ['name', 'parent', 'branch', 'description']
         widgets = {
             'parent': DepartmentWidget,
+        }
+
+
+class PositionForm(FormControlMixin, forms.ModelForm):
+    class Meta:
+        model = Position
+        fields = ['name', 'department', 'description']
+        widgets = {
+            'department': DepartmentWidget,
+        }
+
+
+class UserEmployeeForm(FormControlMixin, forms.ModelForm):
+    start_date = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))
+    class Meta:
+        model = UserEmployee
+        fields = ['user', 'position','start_date']
+        widgets = {
+            'user': UserWidget,
+            'position': PositionWidget,
         }
 
 

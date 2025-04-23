@@ -85,11 +85,13 @@ THIRD_PARTY_APPS = [
     "drf_spectacular",
     "django_select2",
     "django_tables2",
+    "keydev_reports",
 ]
 
 LOCAL_APPS = [
     "project.users",
-    "project.core"
+    "project.core",
+    "project.documents"
     # Your stuff: custom apps go here
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps

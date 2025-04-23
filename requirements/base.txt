@@ -25,9 +25,17 @@ django-cors-headers==4.7.0  # https://github.com/adamchainz/django-cors-headers
 # DRF-spectacular for api documentation
 drf-spectacular==0.28.0  # https://github.com/tfranzel/drf-spectacular
 
+#setuptools
+#cython
+
 cryptography==44.0.2
 django-select2==8.4.0
 django-tables2==2.7.5
-setuptools
-cython
+pydantic==2.11.3
+XlsxWriter==3.2.3
+python-docx==1.1.2
+python-docx-replace==0.4.4
+--extra-index-url https://test.pypi.org/simple/
+keydev-reports==0.7.3
+
 
