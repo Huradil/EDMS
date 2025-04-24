@@ -1,0 +1,37 @@
+
+скрип для сохранения стиля боковой панели в localStorage он не сохраняет стиль элементов
+
+const sidebar = document.getElementById("sidenav-main");
+
+if (sidebar) {
+    const observer = new MutationObserver(() => {
+        const newBgClass = Array.from(sidebar.classList).find(cls => cls.startsWith("bg-"));
+        if (newBgClass) {
+            const currentStyle = localStorage.getItem("sidebarStyle");
+            if (currentStyle !== newBgClass) {
+                localStorage.setItem("sidebarStyle", newBgClass);
+            }
+        }
+    });
+
+    observer.observe(sidebar, { attributes: true, attributeFilter: ["class"] });
+}
+
+window.addEventListener("DOMContentLoaded", () => {
+    const savedBgClass = localStorage.getItem("sidebarStyle");
+    if (savedBgClass && sidebar) {
+        // Удаляем все классы фона
+        Array.from(sidebar.classList)
+            .filter(cls => cls.startsWith("bg-"))
+            .forEach(cls => sidebar.classList.remove(cls));
+
+        // Удаляем my-2 временно
+        sidebar.classList.remove("my-2");
+
+        // Добавляем фон
+        sidebar.classList.add(savedBgClass);
+
+        // Добавляем my-2 в самый конец
+        sidebar.classList.add("my-2");
+    }
+});

@@ -1,3 +1,4 @@
+import base64
 from django.db import models
 
 from project.users.models import User
@@ -34,6 +35,14 @@ class Document(models.Model):
 
     def __str__(self):
         return self.name
+
+    def verify_signature(self, signature: str, user: User) -> bool:
+        signature_bytes = base64.b64decode(signature)
+        with open(self.file.path, 'rb') as f:
+            document_bytes = f.read()
+        return user.verify_signature(document_bytes, signature_bytes)
+
+
 
 
 class Signature(models.Model):

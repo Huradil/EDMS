@@ -95,4 +95,34 @@
 <!-- что нибудь можно поставить футер сайдбара-->
       </div>
     </div>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.collapse').forEach(collapseEl => {
+        const id = collapseEl.id;
+        const state = localStorage.getItem(`sidebarState_${id}`);
+
+        // Явно инициализируем Collapse
+        const collapse = new bootstrap.Collapse(collapseEl, {
+            toggle: false
+        });
+
+        // Восстанавливаем состояние
+        if (state === 'shown') {
+            collapse.show();
+        } else if (state === 'hidden') {
+            collapse.hide();
+        }
+
+        // Навешиваем слушатели только после инициализации
+        collapseEl.addEventListener('shown.bs.collapse', () => {
+            localStorage.setItem(`sidebarState_${id}`, 'shown');
+        });
+
+        collapseEl.addEventListener('hidden.bs.collapse', () => {
+            localStorage.setItem(`sidebarState_${id}`, 'hidden');
+        });
+    });
+});
+</script>
+
   </aside>

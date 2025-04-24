@@ -46,6 +46,13 @@ class User(AbstractUser):
         result: bool = verify_signature(self.public_key, document, signature)
         return result
 
+    @property
+    def employee(self):
+        employee = UserEmployee.objects.filter(user=self, end_date__isnull=True)
+        if employee.exists():
+            return employee.first()
+        return None
+
 
     def get_absolute_url(self) -> str:
         """Get URL for user's detail view.

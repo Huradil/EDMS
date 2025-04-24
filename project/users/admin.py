@@ -31,6 +31,9 @@ class UserAdmin(auth_admin.UserAdmin):
                     "is_superuser",
                     "groups",
                     "user_permissions",
+                    "first_name",
+                    "last_name",
+                    "patronymic"
                 ),
             },
         ),

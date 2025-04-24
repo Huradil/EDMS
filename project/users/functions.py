@@ -21,6 +21,7 @@ def create_user(
     )
     user.save()
     user.set_password(password)
+    user.save()
     if key_password:
         user.generate_keys(key_password)
     return user
