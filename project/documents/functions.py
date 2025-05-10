@@ -1,4 +1,7 @@
 import base64
+import logging
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
 from keydev_reports.models import ReportTemplate
 
 from project.users.models import User
@@ -46,6 +49,18 @@ def document_user_sign(document_id: int, user_id: int, password: str):
         )
         return True
     return False
+
+
+def notify_users_about_document(user: User, document: Document):
+    channel_layer = get_channel_layer()
+    async_to_sync(channel_layer.group_send)(
+        f"user_{user.pk}",
+        {
+            'type': 'document_created',
+            'document_id': document.pk,
+            'title': document.name,
+        }
+    )
 
 
 

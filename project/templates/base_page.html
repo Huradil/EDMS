@@ -214,6 +214,49 @@
     body.classList.toggle("g-sidenav-pinned");
 });
 </script>
+<script>
+  console.log('Hello from base_page.html');
+
+  const socketUrl = `ws://${window.location.host}/ws/notifications/document/`;
+  const socket = new WebSocket(socketUrl);
+
+  socket.addEventListener('open', (event) => {
+    console.log("✅ WebSocket connected");
+    socket.send("ping");
+  });
+
+  socket.addEventListener('message', (event) => {
+    console.log("✅ WebSocket Message");
+    const { data } = event;
+
+    if (data === "pong!") {
+      console.log("✅ PONG received");
+      return;
+    }
+
+    try {
+      const message = JSON.parse(data);
+      console.log("📩 WebSocket message received:", message);
+
+      if (message?.title) {
+        alert("Новое сообщение: " + message.title);
+      } else {
+        console.warn("⚠️ Сообщение не содержит 'title'", message);
+      }
+    } catch (err) {
+      console.error("❌ Ошибка при парсинге JSON:", err, "\nПолучено:", data);
+    }
+  });
+
+  socket.addEventListener('close', (event) => {
+    console.warn("🔌 WebSocket closed", event);
+  });
+
+  socket.addEventListener('error', (error) => {
+    console.error("❗ WebSocket error:", error);
+  });
+</script>
+
   <!-- Github buttons -->
   <script async defer src="https://buttons.github.io/buttons.js"></script>
   <!-- Control Center for Material Dashboard: parallax effects, scripts for the example pages etc -->

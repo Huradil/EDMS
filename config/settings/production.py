@@ -49,6 +49,19 @@ CACHES = {
 
 SELECT2_CACHE_BACKEND = "select2"
 
+CHANNEL_REDIS_HOST = "redis://redis:6379/3"
+
+ASGI_APPLICATION = "config.asgi.application"
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [CHANNEL_REDIS_HOST],
+            "symmetric_encryption_keys": [SECRET_KEY],
+        },
+    },
+}
+
 # SECURITY
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#secure-proxy-ssl-header

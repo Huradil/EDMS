@@ -1,13 +1,7 @@
-async def websocket_application(scope, receive, send):
-    while True:
-        event = await receive()
+from django.urls import re_path
+from project.documents.consumers import DocumentConsumer, ChatConsumer
 
-        if event["type"] == "websocket.connect":
-            await send({"type": "websocket.accept"})
-
-        if event["type"] == "websocket.disconnect":
-            break
-
-        if event["type"] == "websocket.receive":
-            if event["text"] == "ping":
-                await send({"type": "websocket.send", "text": "pong!"})
+websocket_urlpatterns = [
+    re_path(r'ws/notifications/document/$', DocumentConsumer.as_asgi()),
+    re_path(r'ws/chat/(?P<room_name>\w+)/$', ChatConsumer.as_asgi()),
+]

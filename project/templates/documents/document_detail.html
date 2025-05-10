@@ -28,9 +28,79 @@
         background: rgba(13,110,253,0.1);
         border-radius: 50%;
     }
+
+
+
+    .chat-container {
+            position: fixed;
+            right: -450px; /* Смещение за пределы экрана */
+            bottom: 20px;
+            width: 420px; /* Ширина контейнера */
+            height: 600px; /* Высота контейнера */
+            z-index: 9999; /* Максимальный приоритет слоя */
+            transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 0 30px rgba(0,0,0,0.2); /* Усиленная тень */
+        }
+
+        .chat-container.active {
+            right: 20px; /* Позиция при активации */
+        }
+
+        .chat-messages {
+            height: 500px !important; /* Высота области сообщений */
+        }
+
+        /* Гарантируем поверхностное отображение всех элементов */
+        .chat-toggle {
+            z-index: 10000 !important; /* Кнопка поверх чата */
+        }
+
+    .message {
+    max-width: 80%;
+    padding: 0.75rem;
+    margin-bottom: 0.5rem;
+    border-radius: 1rem;
+    position: relative;
+}
+
+.message-incoming {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    align-self: flex-start;
+}
+
+.message-outgoing {
+    background: #007bff;
+    color: white;
+    align-self: flex-end;
+}
+
+.message-time {
+    opacity: 0.7;
+    margin-top: 0.3rem;
+}
+
+  @media (max-width: 576px) {
+    .chat-container {
+        width: 100vw !important;
+        height: 100vh !important;
+        bottom: 0;
+        right: -100vw;
+    }
+
+    .chat-container.active {
+        right: 0 !important;
+    }
+
+    .chat-messages {
+        height: calc(100vh - 130px) !important;
+    }
+}
 </style>
 {% endblock %}
 {% block content %}
+<input id="document-id" value="{{ document.pk }}" type="hidden">
+<input id="current_user_username" value="{{ current_user.username }}" type="hidden">
 <div class="container py-5">
     <div class="card shadow-lg border-0 overflow-hidden">
         <!-- Заголовок с градиентом и декором -->
@@ -41,6 +111,9 @@
                 <a href="#" class="btn btn-light btn-hover-scale">
                     <i class="fa-solid fa-arrow-left me-2"></i>К списку документов
                 </a>
+               <a href="#" class="chat-toggle btn btn-light btn-hover-scale shadow-sm" onclick="toggleChat()">
+                    <i class="fa-regular fa-comment-dots me-2"></i>Чат
+               </a>
             </div>
         </div>
 
@@ -207,4 +280,123 @@
         </div>
     </div>
 </div>
+
+<div class="chat-container card shadow-lg border-0" id="chatContainer">
+    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+        <h4 class="mb-0"><i class="fas fa-comments me-2"></i>Онлайн-чат</h4>
+        <button class="btn btn-sm btn-outline-light" onclick="toggleChat()">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+
+    <div class="chat-messages card-body p-3 bg-light" id="chatMessages"
+         style="overflow-y: auto;">
+        {% for message in messages %}
+        <div class="message {% if message.user == current_user %}message-outgoing{% else %}message-incoming{% endif %} mb-2 p-2">
+            <div class="message-content">
+                {% if not message.is_outgoing %}
+                <div class="message-sender small text-muted">
+                    {{ message.user.username }}
+                </div>
+                {% endif %}
+                <div class="message-text">{{ message.text }}</div>
+                <div class="message-time small text-end text-muted">
+                    {{ message.created_at|time:"H:i" }}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="card-footer border-0 bg-white">
+        <div class="message-input input-group">
+            <input type="text"
+                   id="messageInput"
+                   class="form-control border-primary py-2"
+                   placeholder="Напишите сообщение..."
+                   aria-label="Введите сообщение">
+            <button class="btn btn-primary py-2"
+                    type="button"
+                    onclick="sendMessage()">
+                <i class="fas fa-paper-plane me-2"></i>Отправить
+            </button>
+        </div>
+    </div>
+</div>
+    <script>
+        // WebSocket соединение
+        const currentUserUsername = document.getElementById("current_user_username").value;
+        const documentId = document.getElementById("document-id").value;
+        const socketUrl = `ws://${window.location.host}/ws/chat/doc_${documentId}/`;
+
+        const socket = new WebSocket(socketUrl); // Замените на ваш WS URL
+
+        // Элементы интерфейса
+        const chatContainer = document.getElementById('chatContainer');
+        const chatMessages = document.getElementById('chatMessages');
+        const messageInput = document.getElementById('messageInput');
+
+        // Переключение видимости чата
+        function toggleChat() {
+            chatContainer.classList.toggle('active');
+        }
+
+        // Отправка сообщения
+        function sendMessage() {
+            const message = messageInput.value.trim();
+            if(message) {
+                socket.send(JSON.stringify({
+                    message: message,
+                    timestamp: new Date().toISOString()
+                }));
+                messageInput.value = '';
+            }
+        }
+
+        // Обработка входящих сообщений
+        socket.onmessage = function(event) {
+            const message = JSON.parse(event.data);
+            const isOutgoing = message.username == currentUserUsername
+            appendMessage(message.message, isOutgoing, message.username);
+        }
+
+        // Добавление сообщения в чат
+        function appendMessage(text, isOutgoing, userName) {
+              const messageDiv = document.createElement('div');
+              messageDiv.className = `message ${isOutgoing ? 'message-outgoing' : 'message-incoming'} mb-2 p-2`;
+
+              messageDiv.innerHTML = `
+                  <div class="message-content">
+                      ${!isOutgoing ? `<div class="message-sender small text-muted">${userName}</div>` : ''}
+                      <div class="message-text">${text}</div>
+                      <div class="message-time small text-end text-muted">
+                          ${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                      </div>
+                  </div>
+              `;
+
+              chatMessages.appendChild(messageDiv);
+              chatMessages.scrollTop = chatMessages.scrollHeight;
+         }
+
+        // Обработчики событий WebSocket
+        socket.onopen = function() {
+            console.log('WebSocket соединение установлено');
+        }
+
+        socket.onclose = function() {
+            console.log('WebSocket соединение закрыто');
+        }
+
+        socket.onerror = function(error) {
+            console.error('WebSocket ошибка:', error);
+        }
+
+        // Отправка по Enter
+        messageInput.addEventListener('keypress', function(e) {
+            if(e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+    </script>
 {% endblock %}

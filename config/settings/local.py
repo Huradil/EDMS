@@ -14,7 +14,7 @@ SECRET_KEY = env(
     default="stO2YAi9ScevTJUMYEDvan97A0uzdN9KwYv1NOr0c68CoGXowVSSKGBq6tUfdAFt",
 )
 # https://docs.djangoproject.com/en/dev/ref/settings/#allowed-hosts
-ALLOWED_HOSTS = ["localhost", "0.0.0.0", "127.0.0.1"]  # noqa: S104
+ALLOWED_HOSTS = ["localhost", "0.0.0.0", "127.0.0.1", "192.168.150.136"]  # noqa: S104
 
 # CACHES
 # ------------------------------------------------------------------------------
@@ -34,6 +34,19 @@ CACHES = {
 }
 
 SELECT2_CACHE_BACKEND = "select2"
+CHANNEL_REDIS_HOST = "redis://redis:6379/3"
+
+ASGI_APPLICATION = "config.asgi.application"
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [CHANNEL_REDIS_HOST],
+            "symmetric_encryption_keys": [SECRET_KEY],
+        },
+    },
+}
+
 
 # EMAIL
 # ------------------------------------------------------------------------------

@@ -7,7 +7,7 @@ from project.users.models import User
 
 from .forms import DocumentForm
 from .functions import create_document, document_user_sign
-from .models import Document, Signature
+from .models import Document, Signature, ChatMessage
 
 
 class DocumentCreateView(LoginRequiredMixin,CreateView):
@@ -71,10 +71,11 @@ class DocumentDetailView(LoginRequiredMixin, DetailView):
                     'sign_date': signature.created_at if signature and sign else None,
                 }
             )
-
+        context['messages'] = ChatMessage.objects.filter(room_name=f'doc_{self.object.pk}')
         context['can_sign'] = can_sign
         context['document'] = self.object
         context['responsible_users'] = sign_users
+        context['current_user'] = self.request.user
         return context
 
 

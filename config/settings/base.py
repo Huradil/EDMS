@@ -86,6 +86,7 @@ THIRD_PARTY_APPS = [
     "django_select2",
     "django_tables2",
     "keydev_reports",
+    "channels",
 ]
 
 LOCAL_APPS = [
