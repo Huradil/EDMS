@@ -58,7 +58,7 @@ class ChatMessage(models.Model):
     user = models.ForeignKey(User, verbose_name='Отправитель', on_delete=models.CASCADE)
     room_name = models.CharField(max_length=255, verbose_name='Комната сообщения')
     text = models.TextField(verbose_name='Текст сообщения')
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата сообщения')
+    created_at = models.DateTimeField(verbose_name='Дата сообщения')
 
     def __str__(self):
         return f'{self.user.username} - {self.room_name}'

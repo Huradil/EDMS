@@ -24,7 +24,6 @@
                 <div class="form-control">
                   {{ field }}
                 </div>
-                <div class="form-text">{{ field.value|default:"Выберите файл" }}</div>
 
               {% elif field|field_type == 'SelectMultiple' %}
                 {{ field.label_tag }}

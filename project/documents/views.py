@@ -16,6 +16,7 @@ class DocumentCreateView(LoginRequiredMixin,CreateView):
     sidebar_group = 'Документы'
     sidebar_name = 'Запрос документа'
     sidebar_icon = 'fa-solid fa-file-import'
+    object = None
 
     def get(self, request):
         assert isinstance(request.user, User)
@@ -30,7 +31,7 @@ class DocumentCreateView(LoginRequiredMixin,CreateView):
                 document = create_document(
                     name=form.cleaned_data['name'],
                     created_user=request.user,
-                    file=request.FILES['file'],
+                    file=request.FILES.get('file'),
                     responsible_users=form.cleaned_data.get('responsible_users'),
                     description=form.cleaned_data.get('description'),
                     document_template=form.cleaned_data.get('document_template'),
@@ -40,7 +41,7 @@ class DocumentCreateView(LoginRequiredMixin,CreateView):
                 return self.render_to_response(self.get_context_data(form=form))
             else:
                 messages.success(request, f'Документ {document.name} успешно создан')
-                return redirect(reverse('documents:document_create'))
+                return redirect(reverse('documents:document_detail', args=[document.pk]))
         else:
             messages.error(request, 'Ошибка при заполнении формы')
             return self.form_invalid(form)
@@ -71,7 +72,8 @@ class DocumentDetailView(LoginRequiredMixin, DetailView):
                     'sign_date': signature.created_at if signature and sign else None,
                 }
             )
-        context['messages'] = ChatMessage.objects.filter(room_name=f'doc_{self.object.pk}')
+        context['chat_messages'] = ChatMessage.objects.filter(room_name=f'doc_{self.object.pk}').\
+            order_by('created_at')[:50]
         context['can_sign'] = can_sign
         context['document'] = self.object
         context['responsible_users'] = sign_users

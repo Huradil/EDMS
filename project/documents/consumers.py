@@ -1,9 +1,12 @@
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.exceptions import DenyConnection
+from channels.db import database_sync_to_async
 import json
 from django.contrib.auth.models import AnonymousUser
+from django.utils import timezone
 from asgiref.sync import sync_to_async
 from project.documents.models import ChatMessage
+from project.documents.tasks import save_message_task
 
 
 class DocumentConsumer(AsyncWebsocketConsumer):
@@ -58,7 +61,10 @@ class ChatConsumer(AsyncWebsocketConsumer):
         if isinstance(user, AnonymousUser):
             raise DenyConnection('Неавторизованный пользователь')
 
-        await self.save_message(user, self.room_name, message)
+        # await self.save_message(user, self.room_name, message)
+        message_created_at = timezone.now()
+        await database_sync_to_async(save_message_task.delay)(user.id, message, self.room_name,
+                                                               message_created_at )
         await self.channel_layer.group_send(
             self.room_group_name,
             {
@@ -77,12 +83,3 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 }
             )
         )
-
-    @sync_to_async
-    def save_message(self, user, room_name, message):
-        ChatMessage.objects.create(
-            user=user,
-            room_name=room_name,
-            text=message
-        )
-
