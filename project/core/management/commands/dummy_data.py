@@ -4,7 +4,9 @@ import json
 from django.core.management.base import BaseCommand, CommandError
 
 from project.core.models import Branch
-from project.users.models import Department, Position
+from project.users.models import Department, Position, UserPermission
+
+from . import CommandProxy
 
 DATA_FILES = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data_files')
 
@@ -37,12 +39,19 @@ def populate_departments() -> None:
                     name=position['name']
                 )
 
+def populate_permission() -> None:
+    permissions = get_data_from_file('permissions.json')['view_permissions']
+    for perm in permissions:
+        codename = perm.pop('codename')
+        UserPermission.objects.get_or_create(
+            codename=codename,
+            defaults=perm
+        )
 
-class Command(BaseCommand):
-    def handle(self, *args, **options):
-        for func in [populate_branches, populate_departments]:
+
+class Command(CommandProxy):
+    help = 'Заполнение базы данных начальными данными.'
+    def populate_all(self, *args, **options):
+        for func in [populate_branches, populate_departments, populate_permission]:
             func()
-
-    def command_error(self, e):
-        raise CommandError(e)
 

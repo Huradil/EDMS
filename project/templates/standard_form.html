@@ -7,64 +7,91 @@
 {% endblock %}
 
 {% block content %}
-<div class="row justify-content-right">
-  <div class="col-xl-6 col-lg-8 col-md-8">
-    <div class="card border-secondary mb-3">
-      <div class="card-header bg-secondary text-white">
-        <h5 class="mb-0">{{ title }}</h5>
-      </div>
+<div class="container my-5">
+  <div class="row justify-content-center">
+    <div class="col-xl-6 col-lg-8 col-md-10">
+      <div class="card shadow-sm border-0 rounded-3">
+        <div class="card-header bg-primary text-white py-3">
+          <h5 class="mb-0">{{ title }}</h5>
+        </div>
+        <form method="post"
+              enctype="multipart/form-data"
+              class="needs-validation"
+              novalidate>
+          {% csrf_token %}
+          <div class="card-body p-4">
+            {% for field in form %}
+              <div class="mb-3">
+                {% if field|field_type == 'ClearableFileInput' %}
+                  {{ field.label_tag }}
+                  <div class="form-control">
+                    {{ field }}
+                  </div>
+                {% elif field|field_type == 'SelectMultiple' %}
+                  {{ field.label_tag }}
+                  {{ field|add_class:"form-select" }}
+                  {% if field.errors %}
+                    <div class="invalid-feedback d-block">
+                      {{ field.errors }}
+                    </div>
+                  {% endif %}
+                {% elif field|field_type == 'CheckboxInput' %}
+                  <div class="form-check">
+                    <input type="checkbox"
+                           name="{{ field.name }}"
+                           class="form-check-input"
+                           id="id_{{ field.name }}"
+                           {% if field.value %}checked{% endif %}>
+                    <label class="form-check-label" for="id_{{ field.name }}">
+                      {{ field.label }}
+                    </label>
+                  </div>
+                {% else %}
+                  {{ field.label_tag }}
+                  {{ field|add_class:'form-control' }}
+                {% endif %}
 
-      <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
-        {% csrf_token %}
-        <div class="card-body">
-          {% for field in form %}
-            <div class="mb-3">
-              {% if field|field_type == 'ClearableFileInput' %}
-                {{ field.label_tag }}
-                <div class="form-control">
-                  {{ field }}
-                </div>
-
-              {% elif field|field_type == 'SelectMultiple' %}
-                {{ field.label_tag }}
-                {{ field }}
-                {% if field.errors %}
+                {% if field.help_text %}
+                  <div class="form-text">{{ field.help_text|safe }}</div>
+                {% endif %}
+                {% if field.errors and field|field_type != 'SelectMultiple' %}
                   <div class="invalid-feedback d-block">
                     {{ field.errors }}
                   </div>
                 {% endif %}
+              </div>
+            {% endfor %}
+          </div>
 
-              {% elif field|field_type == 'CheckboxInput' %}
-                <div class="form-check">
-                  <input type="checkbox" name="{{ field.name }}" class="form-check-input" id="id_{{ field.name }}" {% if field.value %}checked{% endif %}>
-                  <label class="form-check-label" for="id_{{ field.name }}">{{ field.label }}</label>
-                </div>
-
-              {% else %}
-                {{ field.label_tag }}
-                {{ field|add_class:'form-control' }}
-              {% endif %}
-
-              {% if field.help_text %}
-                <div class="form-text">{{ field.help_text|safe }}</div>
-              {% endif %}
-              {% if field.errors %}
-                <div class="invalid-feedback d-block">
-                  {{ field.errors }}
-                </div>
-              {% endif %}
-            </div>
-          {% endfor %}
-        </div>
-
-        <div class="card-footer text-end">
-          <button type="submit" class="btn btn-primary">Сохранить</button>
-        </div>
-      </form>
+          <div class="card-footer bg-light text-end py-3">
+            <button type="submit" class="btn btn-primary px-4">
+              Сохранить
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   </div>
 </div>
+
+{# Optional: client-side Bootstrap5 validation #}
+<script>
+(function() {
+  'use strict';
+  const forms = document.querySelectorAll('.needs-validation');
+  Array.from(forms).forEach(form => {
+    form.addEventListener('submit', event => {
+      if (!form.checkValidity()) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+      form.classList.add('was-validated');
+    }, false);
+  });
+})();
+</script>
 {% endblock %}
+
 
 {% block extra_js %}
   {{ form.media.js }}

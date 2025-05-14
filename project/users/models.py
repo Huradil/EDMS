@@ -1,10 +1,32 @@
+from enum import unique
+
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
-
 from cython_generate_keys import generate_keys, decrypt_private_key, sign_document, verify_signature
+
+# class UserRole(Enum):
+#     ADMIN = 'ADMIN'
+#     SUPPORT = 'SUPPORT'
+#     EMPLOYEE = 'EMPLOYEE'
+
+class UserPermission(models.Model):
+    codename = models.CharField(max_length=255, verbose_name='Кодовое имя доступа', unique=True)
+    description = models.TextField(verbose_name='Описание доступа', null=True, blank=True)
+
+    def __str__(self):
+        return self.codename
+
+
+class UserRole(models.Model):
+    name = models.CharField(verbose_name='Имя роли', max_length=255)
+    description = models.TextField(verbose_name='Описание роли', null=True, blank=True)
+    permissions = models.ManyToManyField(UserPermission, verbose_name='Доступы роли')
+
+    def __str__(self):
+        return self.name
 
 
 class User(AbstractUser):
@@ -21,6 +43,9 @@ class User(AbstractUser):
                                   null=True, blank=True)
     private_key = models.TextField(blank=True, null=True)
     public_key = models.TextField(blank=True, null=True)
+    role = models.ForeignKey(UserRole, verbose_name='Роль пользователя', null=True, blank=True,
+                             on_delete=models.PROTECT)
+    extra_permissions = models.ManyToManyField(UserPermission, verbose_name='Права доступа пользователя', blank=True)
 
     def __str__(self):
         return self.username
@@ -62,6 +87,17 @@ class User(AbstractUser):
 
         """
         return reverse("users:detail", kwargs={"username": self.username})
+
+    def has_permission_user(self, perm: str, obj=None) -> bool:
+        if self.is_superuser:
+            return True
+        if self.role is not None:
+            if self.role.permissions.filter(codename=perm).exists():
+                return True
+        if self.extra_permissions.filter(codename=perm).exists():
+            return True
+        return False
+
 
 
 class Department(models.Model):

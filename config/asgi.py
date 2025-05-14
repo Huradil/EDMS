@@ -35,6 +35,15 @@ from channels.routing import ProtocolTypeRouter, URLRouter
 from django.core.asgi import get_asgi_application
 import config.websocket
 
+application = ProtocolTypeRouter({
+    "http": get_asgi_application(),
+    "websocket": AuthMiddlewareStack(
+        URLRouter(
+            config.websocket.websocket_urlpatterns
+        )
+    ),
+})
+
 
 # async def application(scope, receive, send):
 #     if scope["type"] == "http":
@@ -45,11 +54,3 @@ import config.websocket
 #         msg = f"Unknown scope type {scope['type']}"
 #         raise NotImplementedError(msg)
 
-application = ProtocolTypeRouter({
-    "http": get_asgi_application(),
-    "websocket": AuthMiddlewareStack(
-        URLRouter(
-            config.websocket.websocket_urlpatterns
-        )
-    ),
-})

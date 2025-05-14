@@ -12,6 +12,7 @@ class DepartmentTable(tables.Table):
             'thead_class': 'text-uppercase',
             'th': {'style': 'font-size: 0.9rem'}
         }
+        template_name = 'pages/django_tables2.html'
 
 
 class PositionTable(tables.Table):
@@ -23,3 +24,4 @@ class PositionTable(tables.Table):
             'thead_class': 'text-uppercase',
             'th': {'style': 'font-size: 0.9rem'}
         }
+        template_name = 'pages/django_tables2.html'

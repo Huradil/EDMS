@@ -1,5 +1,6 @@
 import base64
 from django.db import models
+from django.urls import reverse
 
 from project.users.models import User
 from keydev_reports.models import ReportTemplate
@@ -41,6 +42,20 @@ class Document(models.Model):
         with open(self.file.path, 'rb') as f:
             document_bytes = f.read()
         return user.verify_signature(document_bytes, signature_bytes)
+
+    def get_absolute_url(self):
+        return reverse("documents:document_detail", kwargs={"pk": self.pk})
+
+    def get_button(self):
+        """
+        Метод добавляющий кнопку редактирования
+        :return: строка с кодом кнопки
+        """
+        return f"""
+            <a href="{self.get_absolute_url()}">
+                 <i style="font-size: 18px;" class="nav-icon fas fa-edit"></i>
+            </a>
+              """
 
 
 class Signature(models.Model):

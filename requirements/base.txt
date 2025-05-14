@@ -38,6 +38,7 @@ python-docx-replace==0.4.4
 channels==4.2.2
 channels-redis==4.2.1
 qrcode==8.2
+django-enumfields==2.1.1
 --extra-index-url https://test.pypi.org/simple/
 keydev-reports==0.7.3
 

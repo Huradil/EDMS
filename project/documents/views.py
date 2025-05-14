@@ -4,13 +4,16 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 
 from project.users.models import User
+from project.contrib.mixins import BasePermissionMixin
 
 from .forms import DocumentForm
 from .functions import create_document, document_user_sign
 from .models import Document, Signature, ChatMessage
+from .tables import DocumentTable
 
 
-class DocumentCreateView(LoginRequiredMixin,CreateView):
+class DocumentCreateView(LoginRequiredMixin, BasePermissionMixin, CreateView):
+    permission_required = 'document_create'
     template_name = 'standard_form.html'
     form_class = DocumentForm
     sidebar_group = 'Документы'
@@ -47,7 +50,8 @@ class DocumentCreateView(LoginRequiredMixin,CreateView):
             return self.form_invalid(form)
 
 
-class DocumentDetailView(LoginRequiredMixin, DetailView):
+class DocumentDetailView(LoginRequiredMixin, BasePermissionMixin, DetailView):
+    permission_required = 'document_detail'
     model = Document
     template_name = 'documents/document_detail.html'
 
@@ -81,7 +85,9 @@ class DocumentDetailView(LoginRequiredMixin, DetailView):
         return context
 
 
-class DocumentSignView(LoginRequiredMixin, View):
+class DocumentSignView(LoginRequiredMixin, BasePermissionMixin, View):
+    permission_required = 'document_sign'
+
     def post(self, request, pk):
         assert isinstance(request.user, User)
         try:
@@ -98,6 +104,24 @@ class DocumentSignView(LoginRequiredMixin, View):
             else:
                 messages.error(request, 'Неверный пароль для подписи документа')
         return redirect(reverse('documents:document_detail', args=[pk]))
+
+
+class DocumentListView(LoginRequiredMixin, BasePermissionMixin, View):
+    permission_required = 'document_list'
+    template_name = 'standard_list.html'
+    sidebar_group = 'Документы'
+    sidebar_name = 'Список запрошенных документов'
+    sidebar_icon = 'fa-solid fa-table-list'
+
+    def get(self, request):
+        assert isinstance(request.user, User)
+        documents = Document.objects.all()
+        table = DocumentTable(documents)
+        return render(request, self.template_name,
+                      context={
+                          'table': table,
+                          'table_title': 'Список документов отправленных на подписание'
+                      })
 
 
 

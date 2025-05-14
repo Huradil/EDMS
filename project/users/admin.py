@@ -6,7 +6,7 @@ from django.utils.translation import gettext_lazy as _
 
 from .forms import UserAdminChangeForm
 from .forms import UserAdminCreationForm
-from .models import User, Department
+from .models import User, Department, UserPermission, UserRole
 
 if settings.DJANGO_ADMIN_FORCE_ALLAUTH:
     # Force the `admin` sign in process to go through the `django-allauth` workflow:
@@ -33,7 +33,8 @@ class UserAdmin(auth_admin.UserAdmin):
                     "user_permissions",
                     "first_name",
                     "last_name",
-                    "patronymic"
+                    "patronymic",
+                    "role"
                 ),
             },
         ),
@@ -49,4 +50,18 @@ class DepartmentAdmin(admin.ModelAdmin):
     list_filter = ['branch']
     search_fields = ['name']
     autocomplete_fields = ['branch', 'parent']
+    list_per_page = 20
+
+
+@admin.register(UserPermission)
+class UserPermissionAdmin(admin.ModelAdmin):
+    list_display = ['codename']
+    search_fields = ['codename']
+    list_per_page = 20
+
+
+@admin.register(UserRole)
+class UserRoleAdmin(admin.ModelAdmin):
+    list_display = ['name']
+    search_fields = ['name']
     list_per_page = 20

@@ -8,7 +8,7 @@ from keydev_reports.models import ReportTemplate
 import qrcode
 from io import BytesIO
 from docx import Document as xDocument
-from docx.shared import Inches
+from docx.shared import Cm
 from python_docx_replace.paragraph import Paragraph
 from django.conf import settings
 
@@ -138,7 +138,7 @@ def set_qrcode_to_document(
             parent.remove(para._element)
             new_para = doc.add_paragraph()
             run = new_para.add_run()
-            run.add_picture(qr_buffer, width=Inches(0.787))
+            run.add_picture(qr_buffer, width=Cm(2.3))
             find = True
             break
     if not find:

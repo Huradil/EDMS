@@ -1,4 +1,5 @@
 from django import forms
+from django.contrib.auth.mixins import PermissionRequiredMixin
 
 
 class FormControlMixin:
@@ -18,3 +19,15 @@ class FormControlMixin:
                 field.widget.attrs['title'] = field.label
             else:
                 field.widget.attrs['class'] = 'form-control'
+
+
+class BasePermissionMixin(PermissionRequiredMixin):
+    def has_permission(self):
+        perms = self.get_permission_required()
+        return self.has_perms(perms)
+
+    def has_perm(self, perm, obj=None):
+        return self.request.user.has_permission_user(perm)
+
+    def has_perms(self, perm_list, obj=None):
+        return all(self.has_perm(perm, obj) for perm in perm_list)

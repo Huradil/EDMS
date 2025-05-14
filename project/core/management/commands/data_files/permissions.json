@@ -1,0 +1,40 @@
+{
+  "view_permissions": [
+    {
+      "codename": "department_create",
+      "description": "Permission to create document"
+    },
+    {
+      "codename": "department_list",
+      "description": "Permission to view departments list"
+    },
+    {
+      "codename": "position_create",
+      "description": "Permission to create position object"
+    },
+    {
+      "codename": "position_list",
+      "description": "Permission to view positions list"
+    },
+    {
+      "codename": "employee_create",
+      "description": "Permission to create employee from user"
+    },
+    {
+      "codename": "document_create",
+      "description": "Permission to create document to sign"
+    },
+    {
+      "codename": "document_detail",
+      "description": "Permission to view document detail information"
+    },
+    {
+      "codename": "document_sign",
+      "description": "Permission to sign any document"
+    },
+    {
+      "codename": "document_list",
+      "description": "Permission to view documents list"
+    }
+  ]
+}

@@ -1,11 +1,11 @@
 {% load static %}
 {% load cache %}
-  <aside class="sidenav navbar navbar-vertical navbar-expand-xs border-radius-lg fixed-start ms-2  bg-white my-2" id="sidenav-main">
+  <aside class="sidenav navbar navbar-vertical navbar-expand-xs border-radius-lg fixed-start ms-2 my-2 bg-gradient-dark" id="sidenav-main">
     <div class="sidenav-header">
       <i class="fas fa-times p-3 cursor-pointer text-dark opacity-5 position-absolute end-0 top-0 d-none d-xl-none" aria-hidden="true" id="iconSidenav"></i>
       <a class="navbar-brand px-4 py-3 m-0" href="#" target="_blank">
         <img src="{% static 'material/img/icon_edms2.png' %}" class="navbar-brand-img" width="45" height="50" alt="main_logo">
-        <span class="ms-1 text-sm text-dark">EDMS</span>
+        <span class="ms-1 text-sm text-white">EDMS</span>
       </a>
     </div>
     <hr class="horizontal dark mt-0 mb-2">
@@ -14,26 +14,26 @@
         <!-- USER -->
         {% if user.is_authenticated %}
         <li class="nav-item mb-2 mt-0">
-          <a data-bs-toggle="collapse" href="#ProfileNav" class="nav-link text-dark" aria-controls="ProfileNav" role="button" aria-expanded="false">
+          <a data-bs-toggle="collapse" href="#ProfileNav" class="nav-link text-white" aria-controls="ProfileNav" role="button" aria-expanded="false">
 <!--            <img src="../../assets/img/team-3.jpg" class="avatar">-->
-            <span class="nav-link-text ms-2 ps-1">Nuradil Tolokov</span>
+            <span class="nav-link-text ms-2 ps-1">{{ user.fullname }}</span>
           </a>
           <div class="collapse" id="ProfileNav" style="">
             <ul class="nav ">
               <li class="nav-item">
-                <a class="nav-link text-dark" href="../../pages/pages/profile/overview.html">
+                <a class="nav-link text-white" href="../../pages/pages/profile/overview.html">
                   <span class="sidenav-mini-icon"> MP </span>
                   <span class="sidenav-normal  ms-3  ps-1"> My Profile </span>
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link text-dark " href="../../pages/pages/account/settings.html">
+                <a class="nav-link text-white" href="../../pages/pages/account/settings.html">
                   <span class="sidenav-mini-icon"> S </span>
                   <span class="sidenav-normal  ms-3  ps-1"> Settings </span>
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link text-dark " href="../../pages/authentication/signin/basic.html">
+                <a class="nav-link text-white" href="/accounts/logout">
                   <span class="sidenav-mini-icon"> L </span>
                   <span class="sidenav-normal  ms-3  ps-1"> Logout </span>
                 </a>
@@ -45,7 +45,7 @@
 
       {% for sidebar_group in sidebar_urls %}
         <li class="nav-item mb-2 mt-0">
-          <a data-bs-toggle="collapse" href="#group{{ forloop.counter }}" class="nav-link text-dark" role="button" aria-expanded="false" aria-controls="group{{ forloop.counter }}">
+          <a data-bs-toggle="collapse" href="#group{{ forloop.counter }}" class="nav-link text-white" role="button" aria-expanded="false" aria-controls="group{{ forloop.counter }}">
             <i class="{{ sidebar_group.icon|safe }} nav-icon"></i>
             <span class="nav-link-text ms-2 ps-1">{{ sidebar_group.name }}</span>
           </a>
@@ -54,7 +54,7 @@
               {% for url_item in sidebar_group.items.all %}
                 {% if url_item.children.all %}
                   <li class="nav-item mb-1">
-                    <a data-bs-toggle="collapse" href="#item{{ forloop.parentloop.counter }}_{{ forloop.counter }}" class="nav-link text-dark" role="button" aria-expanded="false" aria-controls="item{{ forloop.parentloop.counter }}_{{ forloop.counter }}">
+                    <a data-bs-toggle="collapse" href="#item{{ forloop.parentloop.counter }}_{{ forloop.counter }}" class="nav-link text-white" role="button" aria-expanded="false" aria-controls="item{{ forloop.parentloop.counter }}_{{ forloop.counter }}">
                       <i class="{{ url_item.icon|safe }} nav-icon"></i>
                       <span class="nav-link-text ms-2 ps-1">{{ url_item.name }}</span>
                     </a>
@@ -62,7 +62,7 @@
                       <ul class="nav">
                         {% for child in url_item.children.all %}
                           <li class="nav-item">
-                            <a href="{% url child.available_url.url_name %}" class="nav-link text-dark">
+                            <a href="{% url child.available_url.url_name %}" class="nav-link text-white">
                               <span class="sidenav-mini-icon"> • </span>
                               <span class="sidenav-normal ms-3 ps-1">{{ child.name }}</span>
                             </a>
@@ -73,9 +73,11 @@
                   </li>
                 {% else %}
                   <li class="nav-item">
-                    <a href="{% url url_item.available_url.url_name %}" class="nav-link text-dark">
+                    <a href="{% url url_item.available_url.url_name %}" class="nav-link text-white">
                       <i class="{{ url_item.icon|safe }} nav-icon"></i>
-                      <span class="nav-link-text ms-2 ps-1">{{ url_item.name }}</span>
+                     <span class="nav-link-text ms-2 ps-1 text-wrap">
+                        {{ url_item.name }}
+                      </span>
                     </a>
                   </li>
                 {% endif %}
@@ -84,8 +86,6 @@
           </div>
         </li>
       {% endfor %}
-
-
 
 
       </ul>

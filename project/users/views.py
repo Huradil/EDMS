@@ -15,6 +15,7 @@ from project.users.models import User, Department, Position
 from project.users.forms import UserCreateForm, UserKeyPasswordForm, DepartmentForm, PositionForm, UserEmployeeForm
 from project.users.functions import create_user, user_generate_keys
 from project.users.tables import DepartmentTable, PositionTable
+from project.contrib.mixins import BasePermissionMixin
 
 
 class UserDetailView(LoginRequiredMixin, DetailView):
@@ -120,7 +121,8 @@ class UserGetKeys(LoginRequiredMixin, View):
             return redirect(reverse('users:generate_keys'))
 
 
-class DepartmentCreateView(LoginRequiredMixin, CreateView):
+class DepartmentCreateView(LoginRequiredMixin, BasePermissionMixin, CreateView):
+    permission_required = 'department_create'
     template_name = 'standard_form.html'
     form_class = DepartmentForm
     sidebar_group = 'Кадровый модуль'
@@ -152,7 +154,8 @@ class DepartmentCreateView(LoginRequiredMixin, CreateView):
             return self.form_invalid(form)
 
 
-class DepartmentListView(LoginRequiredMixin, View):
+class DepartmentListView(LoginRequiredMixin, BasePermissionMixin, View):
+    permission_required = 'department_list'
     template_name = 'standard_list.html'
     sidebar_group = 'Кадровый модуль'
     sidebar_name = 'Список структурных подразделений'
@@ -162,14 +165,14 @@ class DepartmentListView(LoginRequiredMixin, View):
         assert isinstance(request.user, User)
         departments = Department.objects.all()
         table = DepartmentTable(departments)
-        RequestConfig(request, paginate={'per_page': 10}).configure(table)
         return render(request, self.template_name, context={
             'table': table,
             'table_title': 'Список структурных подразделений',
         })
 
 
-class PositionCreateView(LoginRequiredMixin, CreateView):
+class PositionCreateView(LoginRequiredMixin, BasePermissionMixin, CreateView):
+    permission_required = 'position_create'
     template_name = 'standard_form.html'
     form_class = PositionForm
     sidebar_group = 'Кадровый модуль'
@@ -201,7 +204,8 @@ class PositionCreateView(LoginRequiredMixin, CreateView):
             return self.form_invalid(form)
 
 
-class PositionListView(LoginRequiredMixin, View):
+class PositionListView(LoginRequiredMixin, BasePermissionMixin, View):
+    permission_required = 'position_list'
     template_name = 'standard_list.html'
     sidebar_group = 'Кадровый модуль'
     sidebar_name = 'Список должностей'
@@ -211,14 +215,14 @@ class PositionListView(LoginRequiredMixin, View):
         assert isinstance(request.user, User)
         positions = Position.objects.all()
         table = PositionTable(positions)
-        RequestConfig(request, paginate={'per_page': 10}).configure(table)
         return render(request, self.template_name, context={
             'table': table,
             'table_title': 'Список должностей',
         })
 
 
-class EmployeeCreateView(LoginRequiredMixin, CreateView):
+class EmployeeCreateView(LoginRequiredMixin, BasePermissionMixin, CreateView):
+    permission_required = 'employee_create'
     template_name = 'standard_form.html'
     form_class = UserEmployeeForm
     sidebar_group = 'Кадровый модуль'
