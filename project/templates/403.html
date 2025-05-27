@@ -1,13 +1,62 @@
-{% extends "base.html" %}
+{% extends "base_page.html" %}
+{% block extra_css %}
+<style>
+        body {
+            background: linear-gradient(45deg, #ff6b6b, #ff8e8e);
+            height: 100vh;
+            overflow: hidden;
+        }
 
-{% block title %}Forbidden (403){% endblock title %}
+        .error-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 1rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s ease;
+        }
+
+        .error-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .error-code {
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            color: #dc3545;
+        }
+
+        .lock-icon {
+            font-size: 5rem;
+            animation: bounce 1.5s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+    </style>
+{% endblock extra_css %}
 {% block content %}
-  <h1>Forbidden (403)</h1>
-  <p>
-    {% if exception %}
-      {{ exception }}
-    {% else %}
-      You're not allowed to access this page.
-    {% endif %}
-  </p>
+ <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6 text-center">
+                <div class="error-card p-5">
+                    <i class="bi bi-lock-fill lock-icon text-danger mb-4"></i>
+                    <h1 class="error-code display-1 fw-bold mb-4">403</h1>
+                    <h2 class="display-6 mb-4">Доступ запрещен!</h2>
+                    <p class="lead text-muted mb-4">
+                        У вас недостаточно прав для просмотра этой страницы.
+                    </p>
+                    <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+                        <a href="/" class="btn btn-primary btn-lg px-4 gap-3">
+                            <i class="bi bi-house-door me-2"></i>На главную
+                        </a>
+                        <button class="btn btn-outline-secondary btn-lg px-4"
+                                onclick="history.back()">
+                            <i class="bi bi-arrow-left me-2"></i>Назад
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock content %}

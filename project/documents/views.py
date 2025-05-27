@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect, reverse
-from django.views.generic import CreateView, DetailView, View
+from django.views.generic import CreateView, DetailView, View, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
+from django.urls import reverse_lazy
 
 from project.users.models import User
 from project.contrib.mixins import BasePermissionMixin
@@ -122,6 +123,28 @@ class DocumentListView(LoginRequiredMixin, BasePermissionMixin, View):
                           'table': table,
                           'table_title': 'Список документов отправленных на подписание'
                       })
+
+
+class DocumentUpdateView(LoginRequiredMixin, BasePermissionMixin, UpdateView):
+    model = Document
+    permission_required = 'document_update'
+    template_name = "standard_form.html"
+    form_class = DocumentForm
+
+    def dispatch(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        if request.user != self.object.created_by:
+            messages.error(request, 'Вы не являетесь автором этого документа!')
+            return redirect(reverse('documents:document_detail', args=[self.object.pk]))
+        signatures = Signature.objects.filter(document=self.object)
+        if signatures.count() > 0:
+            messages.error(request, 'Подписанный документ не может быть изменен!')
+            return redirect(reverse('documents:document_detail', args=[self.object.pk]))
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_success_url(self):
+        return reverse_lazy('documents:document_detail', args=[self.object.pk])
+
 
 
 

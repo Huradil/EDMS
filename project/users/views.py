@@ -8,7 +8,7 @@ from django.views.generic import DetailView
 from django.views.generic import RedirectView
 from django.views.generic import UpdateView
 from django.views.generic import View, CreateView
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 
 from project.users.models import User, Department, Position
@@ -18,12 +18,26 @@ from project.users.tables import DepartmentTable, PositionTable
 from project.contrib.mixins import BasePermissionMixin
 
 
-class UserDetailView(LoginRequiredMixin, DetailView):
-    model = User
-    slug_field = "username"
-    slug_url_kwarg = "username"
+# class UserDetailView(LoginRequiredMixin, DetailView):
+#     model = User
+#     slug_field = "username"
+#     slug_url_kwarg = "username"
+#
+# user_detail_view = UserDetailView.as_view()
 
-user_detail_view = UserDetailView.as_view()
+class UserDetailView(LoginRequiredMixin, View):
+    def get(self, request, username):
+        user = get_object_or_404(User.objects.select_related('role'), username=username)
+        if user != request.user:
+            return render(request, "403.html")
+        return  render(
+            request,
+            "users/user_detail.html",
+            context={
+                "object": user
+            }
+        )
+
 
 
 class UserUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):

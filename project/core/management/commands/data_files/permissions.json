@@ -35,6 +35,10 @@
     {
       "codename": "document_list",
       "description": "Permission to view documents list"
+    },
+    {
+      "codename": "document_update",
+      "description": "Permission to update own document"
     }
   ]
 }

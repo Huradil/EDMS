@@ -21,19 +21,13 @@
           <div class="collapse" id="ProfileNav" style="">
             <ul class="nav ">
               <li class="nav-item">
-                <a class="nav-link text-white" href="../../pages/pages/profile/overview.html">
+                <a class="nav-link text-white" href="{% url 'users:detail' user.username %}">
                   <span class="sidenav-mini-icon"> MP </span>
                   <span class="sidenav-normal  ms-3  ps-1"> My Profile </span>
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link text-white" href="../../pages/pages/account/settings.html">
-                  <span class="sidenav-mini-icon"> S </span>
-                  <span class="sidenav-normal  ms-3  ps-1"> Settings </span>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link text-white" href="/accounts/logout">
+                <a class="nav-link text-white" href="{% url 'account_logout' %}">
                   <span class="sidenav-mini-icon"> L </span>
                   <span class="sidenav-normal  ms-3  ps-1"> Logout </span>
                 </a>

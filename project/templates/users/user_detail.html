@@ -1,44 +1,117 @@
-{% extends "base.html" %}
+{% extends "base_page.html" %}
 
-{% load static %}
-
-{% block title %}
-  User: 
-  
-    {{ object.username }}
-  
-  
-{% endblock title %}
 {% block content %}
-  <div class="container">
-    <div class="row">
-      <div class="col-sm-12">
-        <h2>
-        
-        
-          {{ object.username }}
-        
-      </h2>
-      {% if object.name %}
-        <p>{{ object.name }}</p>
-      {% endif %}
+<div class="container py-5">
+    <!-- Заголовок -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="display-5 fw-bold">
+            <i class="fa-solid fa-circle-user"></i>Профиль пользователя
+        </h1>
     </div>
-  </div>
-  {% if object == request.user %}
-    <!-- Action buttons -->
-    <div class="row">
-      <div class="col-sm-12">
-        <a class="btn btn-primary" href="{% url 'users:update' %}" role="button">My Info</a>
-        <a class="btn btn-primary"
-           href="{% url 'account_email' %}"
-           role="button">E-Mail</a>
-        <a class="btn btn-primary"
-           href="{% url 'mfa_index' %}"
-           role="button">MFA</a>
-        <!-- Your Stuff: Custom user template urls -->
-      </div>
+
+    <!-- Основная информация -->
+    <div class="card shadow-lg mb-4">
+        <div class="card-header bg-primary text-white">
+            <h5 class="card-title mb-0">
+                <i class="fa-solid fa-circle-info"></i>Основные данные
+            </h5>
+        </div>
+        <div class="card-body">
+            <dl class="row mb-0">
+                <dt class="col-sm-3">ФИО:</dt>
+                <dd class="col-sm-9">{{ user.fullname|default:"Не указано" }}</dd>
+
+                <dt class="col-sm-3">Логин:</dt>
+                <dd class="col-sm-9">{{ user.username }}</dd>
+
+                <dt class="col-sm-3">Email:</dt>
+                <dd class="col-sm-9">{{ user.email|default:"Не указан" }}</dd>
+
+                <dt class="col-sm-3">Отчество:</dt>
+                <dd class="col-sm-9">{{ user.patronymic|default:"Не указано" }}</dd>
+
+                <dt class="col-sm-3">Дата регистрации:</dt>
+                <dd class="col-sm-9">{{ user.date_joined|date:"d.m.Y H:i" }}</dd>
+
+                <dt class="col-sm-3">Последний вход:</dt>
+                <dd class="col-sm-9">{{ user.last_login|date:"d.m.Y H:i"|default:"Никогда" }}</dd>
+            </dl>
+        </div>
     </div>
-    <!-- End Action buttons -->
-  {% endif %}
+
+    <!-- Роль пользователя -->
+    <div class="card shadow-lg mb-4">
+        <div class="card-header bg-info text-white">
+            <h5 class="card-title mb-0">
+                <i class="fa-solid fa-shield-halved"></i>Роль в системе
+            </h5>
+        </div>
+        <div class="card-body">
+            {% if user.role %}
+                <div class="d-flex align-items-center">
+                    <div class="bg-primary text-white rounded-circle p-3 me-3">
+                        <i class="fa-solid fa-address-book"></i>
+                    </div>
+                    <div>
+                        <h5 class="mb-1">{{ user.role.name }}</h5>
+                        <p class="text-muted mb-0">{{ user.role.description }}</p>
+                    </div>
+                </div>
+            {% else %}
+                <div class="alert alert-warning mb-0">
+                    Роль не назначена
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Статус аккаунта -->
+    <div class="row g-4">
+        <div class="col-md-6">
+            <div class="card shadow-lg h-100">
+                <div class="card-header bg-secondary text-white">
+                    <h5 class="card-title mb-0">
+                        <i class="fa-solid fa-gear"></i></i>Статус аккаунта
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Активность
+                            <span class="badge bg-{% if user.is_active %}success{% else %}danger{% endif %}">
+                                {% if user.is_active %}Активен{% else %}Заблокирован{% endif %}
+                            </span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Статус персонала
+                            <span class="badge bg-{% if user.is_staff %}primary{% else %}secondary{% endif %}">
+                                {% if user.is_staff %}Да{% else %}Нет{% endif %}
+                            </span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Действия -->
+        <div class="col-md-6">
+            <div class="card shadow-lg h-100">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="card-title mb-0">
+                        <i class="fa-solid fa-bolt"></i>Действия
+                    </h5>
+                </div>
+                <div class="card-body d-grid gap-2">
+
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-{% endblock content %}
+
+<!-- Модальное окно сброса пароля -->
+
+
+<!-- Подключение Bootstrap 5 -->
+
+{% endblock %}

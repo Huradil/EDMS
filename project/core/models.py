@@ -1,6 +1,7 @@
 from django.db import models
 from django.core.cache import cache
 from django.core.cache.utils import make_template_fragment_key
+from django.utils.translation import gettext_lazy as _
 from project.users.models import User
 
 
@@ -11,6 +12,10 @@ class Branch(models.Model):
     open_date = models.DateField(verbose_name='Дата открытия')
     close_date = models.DateField(verbose_name='Дата закрытия', null=True, blank=True)
     is_active = models.BooleanField(verbose_name='Филиал активен', default=True)
+
+    class Meta:
+        verbose_name = _('Branch')
+        verbose_name_plural = _('Branches')
 
     def __str__(self):
         return self.name

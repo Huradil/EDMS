@@ -16,6 +16,10 @@ class UserPermission(models.Model):
     codename = models.CharField(max_length=255, verbose_name='Кодовое имя доступа', unique=True)
     description = models.TextField(verbose_name='Описание доступа', null=True, blank=True)
 
+    class Meta:
+        verbose_name = _('Permission')
+        verbose_name_plural = _('Permissions')
+
     def __str__(self):
         return self.codename
 
@@ -24,6 +28,10 @@ class UserRole(models.Model):
     name = models.CharField(verbose_name='Имя роли', max_length=255)
     description = models.TextField(verbose_name='Описание роли', null=True, blank=True)
     permissions = models.ManyToManyField(UserPermission, verbose_name='Доступы роли')
+
+    class Meta:
+        verbose_name = _('Role')
+        verbose_name_plural = _('Roles')
 
     def __str__(self):
         return self.name
@@ -48,7 +56,7 @@ class User(AbstractUser):
     extra_permissions = models.ManyToManyField(UserPermission, verbose_name='Права доступа пользователя', blank=True)
 
     def __str__(self):
-        return self.username
+        return self.fullname
 
     def generate_keys(self, password: str):
         self.private_key, self.public_key = generate_keys(password)
@@ -99,7 +107,6 @@ class User(AbstractUser):
         return False
 
 
-
 class Department(models.Model):
     name = models.CharField(max_length=255, verbose_name='Название структурного подразделения',
                             help_text='Введите название структурного подразделения')
@@ -110,6 +117,10 @@ class Department(models.Model):
                                help_text='Выберите филиал')
     description = models.TextField(verbose_name='Описание структурного подразделения',
                                    help_text='Введите описание структурного подразделения', null=True, blank=True)
+
+    class Meta:
+        verbose_name = _('Department')
+        verbose_name_plural = _('Departments')
 
     def __str__(self):
         return f"{self.name} ({self.branch.name})"

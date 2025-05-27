@@ -34,6 +34,7 @@ class UserAdmin(auth_admin.UserAdmin):
                     "first_name",
                     "last_name",
                     "patronymic",
+                    "extra_permissions",
                     "role"
                 ),
             },

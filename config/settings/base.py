@@ -3,6 +3,7 @@
 
 import ssl
 from pathlib import Path
+from csp.constants import NONCE
 
 import environ
 
@@ -87,6 +88,8 @@ THIRD_PARTY_APPS = [
     "django_tables2",
     "keydev_reports",
     "channels",
+    "anymail",
+    "csp"
 ]
 
 LOCAL_APPS = [
@@ -145,6 +148,7 @@ MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    # "csp.middleware.CSPMiddleware",
     "django.middleware.locale.LocaleMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -231,12 +235,20 @@ X_FRAME_OPTIONS = "DENY"
 # EMAIL
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#email-backend
-EMAIL_BACKEND = env(
-    "DJANGO_EMAIL_BACKEND",
-    default="django.core.mail.backends.smtp.EmailBackend",
-)
+# EMAIL_BACKEND = env(
+#     "DJANGO_EMAIL_BACKEND",
+#     default="anymail.backends.elasticemail.EmailBackend",
+#     default="django.core.mail.backends.smtp.EmailBackend",
+# )
 # https://docs.djangoproject.com/en/dev/ref/settings/#email-timeout
 EMAIL_TIMEOUT = 5
+
+EMAIL_BACKEND     = "anymail.backends.sendgrid.EmailBackend"
+DEFAULT_FROM_EMAIL = "nuradiltolokov01dev@gmail.com"  # должно совпадать с тем, что вы верифицировали в SendGrid
+
+ANYMAIL = {
+    "SENDGRID_API_KEY": env("SEND_GRID_API_KEY", default="test_api_key")
+}
 
 # ADMIN
 # ------------------------------------------------------------------------------
@@ -268,6 +280,22 @@ LOGGING = {
             "level": "DEBUG",
             "class": "logging.StreamHandler",
             "formatter": "verbose",
+        },
+    },
+    "loggers": {
+        "django": {
+            "handlers": ["console"],
+            "level": "DEBUG",
+        },
+        "django.request": {
+            "handlers": ["console"],
+            "level": "DEBUG",
+            "propagate": False,
+        },
+        "django.smtp": {
+            "handlers": ["console"],
+            "level": "DEBUG",
+            "propagate": False,
         },
     },
     "root": {"level": "INFO", "handlers": ["console"]},
@@ -360,3 +388,27 @@ SPECTACULAR_SETTINGS = {
 }
 # Your stuff...
 # ------------------------------------------------------------------------------
+
+CONTENT_SECURITY_POLICY = {
+    "DIRECTIVES": {
+        "default-src": ("'self'",),
+        "font-src":    ("'self'", "data:"),
+        "img-src":     ("'self'", "data:"),
+        "script-src":  (
+            "'self'",
+            "https://buttons.github.io",
+            "https://cdnjs.cloudflare.com",
+            "https://unpkg.com",
+
+                        ),
+        "style-src":   (
+            "'self'",
+            "https://fonts.googleapis.com",
+            NONCE,
+        ),
+    },
+    # При необходимости:
+    # "EXCLUDE_URL_PREFIXES": [...],
+    # "REPORT_ONLY": True,
+    # "REPORT_URI": "/csp-report/",
+}
