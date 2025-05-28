@@ -11,6 +11,9 @@ from drf_spectacular.views import SpectacularAPIView
 from drf_spectacular.views import SpectacularSwaggerView
 from rest_framework.authtoken.views import obtain_auth_token
 
+from project.users.views import UserCreateView
+
+
 urlpatterns = [
     path("home/", TemplateView.as_view(template_name="pages/home.html"), name="home"),
     path(
@@ -23,7 +26,10 @@ urlpatterns = [
     # User management
     path("users/", include("project.users.urls", namespace="users")),
     path("", include("project.core.urls", namespace="core"), name="index"),
+    #Documents
     path("documents/", include("project.documents.urls", namespace="documents")),
+    #accounts and login-register views
+    path("accounts/signup/", UserCreateView.as_view(), name="register"),
     path("accounts/", include("allauth.urls")),
 
 

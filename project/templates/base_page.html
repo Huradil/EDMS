@@ -24,7 +24,7 @@
   <!-- awesome -->
   <link href="{% static 'plugins/fontawesome/css/all.min.css' %}" rel="stylesheet" />
   <link href="{% static 'plugins/bootstrap_5/css/bootstrap.min.css' %}" rel="stylesheet">
-  {% block extra_css %}{% endblock %}
+  {% block extra_css %}{% endblock extra_css %}
   <link href="{% static 'css/project.css' %}" rel="stylesheet" />
 
 </head>
@@ -69,11 +69,13 @@
     <!-- Navbar -->
           {% include 'includes/navbar.html' %}
     <!-- End Navbar -->
+    {% block main %}
       <div class="flex-grow-1">
         {% block content %}
 
         {% endblock content %}
     </div>
+    {% endblock main %}
       <footer class="footer py-4 mt-auto">
         <div class="container-fluid">
           <div class="row align-items-center justify-content-lg-between">
@@ -262,7 +264,7 @@
   <!-- Control Center for Material Dashboard: parallax effects, scripts for the example pages etc -->
   <script src="{% static 'material/js/material-dashboard.min.js?v=3.2.0' %}"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-{% block extra_js %}{% endblock %}
+{% block extra_js %}{% endblock extra_js %}
 </body>
 
 </html>

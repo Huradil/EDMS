@@ -46,7 +46,7 @@
                     </div>
 
                     <div class="card-body p-4 p-md-5">
-                        <form method="post" class="needs-validation" novalidate action="{% url 'users:user_create' %}">
+                        <form method="post" class="needs-validation" novalidate action="{% url 'register' %}">
                             {% csrf_token %}
 
                             <div class="row g-3 mb-4">
@@ -124,7 +124,7 @@
                 </div>
 
                 <div class="text-center mt-4 text-muted small">
-                    <p>Уже есть аккаунт? <a href="#" class="text-decoration-none">Войдите</a></p>
+                    <p>Уже есть аккаунт? <a href="{% url 'account_login' %}" class="text-decoration-none">Войдите</a></p>
                 </div>
             </div>
         </div>

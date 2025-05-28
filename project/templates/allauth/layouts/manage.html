@@ -1,6 +1,16 @@
-{% extends "base.html" %}
+{% extends "base_page.html" %}
+{% load i18n %}
 
 {% block main %}
-  {% block content %}
-  {% endblock content %}
+  <div class="container-fluid min-vh-100 bg-light py-5">
+    <div class="row justify-content-center">
+      <div class="col-12 col-md-10 col-lg-8 col-xl-6 px-md-4">
+        <div class="card shadow-sm mt-md-5">
+          <div class="card-body p-4 p-md-5">
+            {% block content %}{% endblock content %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 {% endblock main %}

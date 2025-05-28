@@ -277,27 +277,27 @@ LOGGING = {
     },
     "handlers": {
         "console": {
-            "level": "DEBUG",
+            "level": "INFO",
             "class": "logging.StreamHandler",
             "formatter": "verbose",
         },
     },
-    "loggers": {
-        "django": {
-            "handlers": ["console"],
-            "level": "DEBUG",
-        },
-        "django.request": {
-            "handlers": ["console"],
-            "level": "DEBUG",
-            "propagate": False,
-        },
-        "django.smtp": {
-            "handlers": ["console"],
-            "level": "DEBUG",
-            "propagate": False,
-        },
-    },
+    # "loggers": {
+    #     "django": {
+    #         "handlers": ["console"],
+    #         "level": "DEBUG",
+    #     },
+    #     "django.request": {
+    #         "handlers": ["console"],
+    #         "level": "DEBUG",
+    #         "propagate": False,
+    #     },
+    #     "django.smtp": {
+    #         "handlers": ["console"],
+    #         "level": "DEBUG",
+    #         "propagate": False,
+    #     },
+    # },
     "root": {"level": "INFO", "handlers": ["console"]},
 }
 
